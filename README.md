@@ -256,4 +256,6 @@ Maintained by [SiteQ8](https://github.com/SiteQ8).
 
 ---
 
+**Disclaimer**: This framework is provided for educational and professional use. Always test security implementations in development environments before production deployment. Users should seek proper training and certification from authorized providers for comprehensive understanding of ICS security principles. The authors are not responsible for any operational disruptions caused by implementation of these security controls.
+
 **Disclaimer**: This framework is provided for educational and professional use. Always test security implementations in development environments before production deployment. The authors are not responsible for any operational disruptions caused by implementation of these security controls.
