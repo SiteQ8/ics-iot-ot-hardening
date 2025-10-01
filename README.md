@@ -77,7 +77,7 @@ ics-hardening-framework/
 1. Clone the repository:
 ```bash
 git clone https://github.com/SiteQ8/ics-iot-ot-hardening.git
-cd ics-hardening-framework
+cd ics-iot-ot-hardening
 ```
 
 2. Install dependencies:
