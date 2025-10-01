@@ -1,6 +1,6 @@
-# Contributing to ICS Hardening Framework
+# Contributing to ICS/IoT/OT Hardening Framework
 
-Thank you for your interest in contributing to the ICS Hardening Framework! This document outlines the guidelines and processes for contributing to this project.
+Thank you for your interest in contributing to the ICS/IoT/OT Hardening Framework! This document outlines the guidelines and processes for contributing to this project.
 
 ## 🎯 Code of Conduct
 
@@ -26,7 +26,7 @@ By participating in this project, you agree to abide by our Code of Conduct:
 1. Fork the repository
 2. Clone your fork locally:
 ```bash
-git clone https://github.com/your-username/ics-hardening-framework.git
+git clone https://github.com/SiteQ8/ics-iot-ot-hardening
 cd ics-hardening-framework
 ```
 
@@ -217,24 +217,6 @@ Brief description of changes
 - [ ] No security vulnerabilities introduced
 ```
 
-## 🔒 Security Contributions
-
-### Responsible Disclosure
-
-For security vulnerabilities:
-1. **Do NOT** create public issues
-2. Email security@organization.com with details
-3. Allow 90 days for patch development
-4. Coordinate public disclosure timing
-
-### Security Review Process
-
-Security-related contributions require:
-- Additional review by security team members
-- Threat modeling for new features
-- Security testing validation
-- Documentation of security implications
-
 ## 📖 Documentation Standards
 
 ### Markdown Guidelines
@@ -316,7 +298,7 @@ tests/
 ### Communication Channels
 - **GitHub Discussions**: General questions and ideas
 - **GitHub Issues**: Bug reports and feature requests
-- **Email**: security@organization.com for security issues
+- **Email**: site@hotmail.com for security issues
 - **Wiki**: Additional documentation and guides
 
 ### Mentorship Program
