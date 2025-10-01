@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/badge/Version-1.0.0-blue.svg)](https://github.com/SiteQ8/ics-iot-ot-hardening)
 [![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Made in Kuwait 🇰🇼 ](https://img.shields.io/badge/Made%20in%20Kuwait-🇰🇼-blue.svg)]
+[![Made in Kuwait 🇰🇼 ](https://img.shields.io/badge/Made%20in%20Kuwait-🇰🇼-blue.svg)
 
 A comprehensive Industrial Control Systems (ICS)/ Internet of Things (IoT)/ Operational technology (OT) hardening framework providing security controls, implementation guides, and tools for securing operational technology environments.
 
