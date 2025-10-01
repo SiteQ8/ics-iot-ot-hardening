@@ -238,7 +238,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-- 📧 Email: [security@organization.com](mailto:security@organization.com)
+- 📧 Email: [site@hotmail.com](mailto:site@hotmail.com.com)
 - 💬 Discussions: [GitHub Discussions](https://github.com/username/ics-hardening-framework/discussions)
 - 🐛 Issues: [GitHub Issues](https://github.com/username/ics-hardening-framework/issues)
 - 📖 Wiki: [Project Wiki](https://github.com/username/ics-hardening-framework/wiki)
