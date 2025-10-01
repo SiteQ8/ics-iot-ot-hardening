@@ -12,7 +12,7 @@ This repository contains a complete ICS hardening framework designed to help org
 
 ## 📋 Table of Contents
 
-- [Features](#features)
+- [Features](#-features)
 - [Framework Structure](#framework-structure)
 - [Quick Start](#quick-start)
 - [Implementation Guide](#implementation-guide)
