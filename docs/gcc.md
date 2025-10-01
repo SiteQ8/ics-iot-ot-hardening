@@ -1,4 +1,3 @@
-```markdown
 # GCC IoT/ICS/OT Cybersecurity Resources
 
 This document provides verified links to publicly available Industrial Control Systems (ICS), Operational Technology (OT), and Internet of Things (IoT) cybersecurity frameworks and guidelines across GCC countries.
@@ -24,4 +23,3 @@ This document provides verified links to publicly available Industrial Control S
 ## Identified Gap
 
 No publicly accessible, GCC-wide or other member-state–specific IoT/ICS/OT cybersecurity guidelines beyond the above were found. Organizations should adopt international standards (e.g., NIST SP 800-82, IEC 62443) and coordinate with national CERTs for detailed OT/ICS requirements.  
-```
