@@ -185,12 +185,12 @@ Detailed implementation guides available in [docs/implementation/](docs/implemen
 ### Monitoring Tools
 - `siem-integration.py` - SIEM connector for ICS events
 - `anomaly-detector.py` - Behavioral analysis
-- `alert-manager.py` - Incident notification system **pending**
+- `alert-manager.py` - Incident notification system 
 
 ### Assessment Tools
 - `vulnerability-scanner.py` - ICS-specific vuln assessment
 - `cbk_compliance.py` - Standards CBK compliance validation
-- `risk-calculator.py` - Risk scoring and prioritization **pending**
+- `risk-calculator.py` - Risk scoring and prioritization
 
 ## 📚 Documentation
 
