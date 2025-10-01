@@ -13,14 +13,15 @@ This repository contains a complete ICS hardening framework designed to help org
 ## 📋 Table of Contents
 
 - [Features](#-features)
-- [Framework Structure](#framework-structure)
-- [Quick Start](#quick-start)
-- [Implementation Guide](#implementation-guide)
-- [Security Controls](#security-controls)
-- [Tools and Scripts](#tools-and-scripts)
-- [Documentation](#documentation)
-- [Contributing](#contributing)
-- [License](#license)
+- [Framework Structure](#-framework-structure)
+- [Quick Start](#-quick-start)
+- [Implementation Guide](#-implementation-guide)
+- [Security Controls](#-security-controls)
+- [Tools and Scripts](#-tools-and-scripts)
+- [Documentation](#-documentation)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Author](#author)
 
 ## ✨ Features
 
