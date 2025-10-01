@@ -6,6 +6,7 @@ A comprehensive network scanner designed specifically for Industrial Control Sys
 Discovers ICS devices, identifies protocols, and performs security assessments.
 
 Author: Ali AlEnezi
+Github: https://github.com/SiteQ8/ics-iot-ot-hardening/edit/main/scripts/network-scanner.py
 License: MIT
 Version: 1.0.0
 """
