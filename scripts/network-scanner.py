@@ -9,6 +9,19 @@ Author: Ali AlEnezi
 Github: https://github.com/SiteQ8/ics-iot-ot-hardening/edit/main/scripts/network-scanner.py
 License: MIT
 Version: 1.0.0
+
+🔎 Purpose
+
+Scans a given network range (CIDR format, e.g., 192.168.1.0/24) for ICS/OT protocols like:
+
+Modbus TCP (port 502)
+
+DNP3 (port 20000)
+
+EtherNet/IP (ENIP) (port 44818)
+
+Identifies active devices, attempts protocol-specific handshakes/requests, and performs basic security checks.
+
 """
 
 import socket
