@@ -7,7 +7,7 @@
 [![Beta](https://img.shields.io/badge/Status-Beta-orange.svg)]
 
 
-A comprehensive Industrial Control Systems (ICS)/ Internet of Things (IoT)/ Operational technology (OT) hardening framework providing security controls, implementation guides, and tools for securing operational technology environments.
+An Industrial Control Systems (ICS), Internet of Things (IoT), and Operational Technology (OT) hardening framework offering security controls, implementation guides, and tools to protect operational technology environments.
 
 ## 🎯 Overview
 
