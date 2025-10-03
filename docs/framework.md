@@ -39,4 +39,4 @@ Web: https://owasp.org/www-project-internet-of-things/
 
 ---
 
-Organizations should select one or more of these frameworks and adapt them to their specific ICS/OT/IoT environments and regulatory requirements.```
+Organizations should select one or more of these frameworks and adapt them to their specific ICS/OT/IoT environments and regulatory requirements.
