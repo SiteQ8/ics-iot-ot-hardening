@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  ics-dashboard:
+    build: .
+    container_name: ics-hardening-dashboard
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./reports:/app/reports
+      - ./output:/app/output
+    environment:
+      - ICS_LOG_LEVEL=INFO
+      - ICS_REPORT_DIR=/app/reports
+    networks:
+      - ics-net
+    restart: unless-stopped
+
+  ics-scanner:
+    build: .
+    container_name: ics-scanner
+    entrypoint: ["ics-scan"]
+    volumes:
+      - ./reports:/app/reports
+    environment:
+      - ICS_LOG_LEVEL=INFO
+    networks:
+      - ics-net
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+
+  ics-monitor:
+    build: .
+    container_name: ics-monitor
+    entrypoint: ["ics-monitor"]
+    volumes:
+      - ./reports:/app/reports
+    environment:
+      - ICS_LOG_LEVEL=DEBUG
+    networks:
+      - ics-net
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    network_mode: host
+
+networks:
+  ics-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

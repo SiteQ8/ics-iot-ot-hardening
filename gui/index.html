@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICS/IoT/OT Hardening Framework — Security Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e17;--bg2:#0f1520;--bg3:#141b2a;--bg4:#1a2236;
+  --border:#1e2a40;--border-glow:#00f0ff15;
+  --text:#c8d6e5;--text-dim:#5a6e87;--text-bright:#e8f0fa;
+  --cyan:#00f0ff;--cyan-dim:#00f0ff40;--cyan-glow:#00f0ff20;
+  --red:#ff3860;--red-dim:#ff386040;
+  --amber:#ffb347;--amber-dim:#ffb34740;
+  --green:#23d160;--green-dim:#23d16040;
+  --purple:#a855f7;--purple-dim:#a855f740;
+  --font-mono:'JetBrains Mono',monospace;
+  --font-heading:'Space Grotesk',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+}
+html{font-size:14px;scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
+
+/* Animated background grid */
+body::before{content:'';position:fixed;inset:0;
+  background:
+    linear-gradient(var(--border)1px,transparent 1px),
+    linear-gradient(90deg,var(--border)1px,transparent 1px);
+  background-size:60px 60px;opacity:.15;z-index:0;pointer-events:none;
+  animation:gridShift 30s linear infinite;
+}
+@keyframes gridShift{0%{transform:translate(0,0)}100%{transform:translate(60px,60px)}}
+
+/* Glow orbs */
+body::after{content:'';position:fixed;top:-200px;right:-200px;width:600px;height:600px;
+  background:radial-gradient(circle,var(--cyan-glow),transparent 70%);
+  z-index:0;pointer-events:none;animation:orbFloat 8s ease-in-out infinite alternate}
+@keyframes orbFloat{0%{transform:translate(0,0)}100%{transform:translate(-80px,80px)}}
+
+.orb2{position:fixed;bottom:-200px;left:-200px;width:500px;height:500px;
+  background:radial-gradient(circle,#a855f715,transparent 70%);
+  z-index:0;pointer-events:none;animation:orbFloat2 10s ease-in-out infinite alternate}
+@keyframes orbFloat2{0%{transform:translate(0,0)}100%{transform:translate(60px,-60px)}}
+
+#app{position:relative;z-index:1;max-width:1440px;margin:0 auto;padding:0 2rem 4rem}
+
+/* Header */
+header{padding:2rem 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;
+  border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:1rem}
+.logo-icon{width:48px;height:48px;position:relative}
+.logo-icon svg{width:100%;height:100%}
+.logo h1{font-family:var(--font-heading);font-size:1.5rem;font-weight:700;color:var(--text-bright);letter-spacing:-.02em}
+.logo span{font-size:.75rem;color:var(--cyan);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.15em;display:block;margin-top:2px}
+.header-actions{display:flex;gap:.75rem;align-items:center}
+.gh-btn{display:flex;align-items:center;gap:.5rem;padding:.5rem 1rem;border:1px solid var(--border);
+  border-radius:8px;background:var(--bg3);color:var(--text);text-decoration:none;font-size:.85rem;
+  transition:all .3s;font-family:var(--font-mono)}
+.gh-btn:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 20px var(--cyan-glow)}
+.status-badge{display:flex;align-items:center;gap:.4rem;padding:.35rem .75rem;border-radius:20px;
+  background:var(--green-dim);font-size:.75rem;font-family:var(--font-mono);color:var(--green)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Navigation */
+nav{display:flex;gap:0;margin:2rem 0 0;border:1px solid var(--border);border-radius:12px;overflow:hidden;
+  background:var(--bg2)}
+nav button{flex:1;padding:.85rem;border:none;background:transparent;color:var(--text-dim);font-family:var(--font-heading);
+  font-size:.85rem;font-weight:500;cursor:pointer;transition:all .3s;border-right:1px solid var(--border);position:relative}
+nav button:last-child{border-right:none}
+nav button:hover{color:var(--text);background:var(--bg3)}
+nav button.active{color:var(--cyan);background:var(--bg3)}
+nav button.active::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:2px;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan)}
+
+/* Tab panels */
+.tab-panel{display:none;animation:fadeIn .4s ease}
+.tab-panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* Section titles */
+.section-title{font-family:var(--font-heading);font-size:1.75rem;font-weight:700;color:var(--text-bright);
+  margin:2rem 0 1rem;display:flex;align-items:center;gap:.75rem}
+.section-title .tag{font-size:.65rem;padding:.25rem .6rem;border-radius:4px;background:var(--cyan-dim);
+  color:var(--cyan);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.1em}
+
+/* Metrics Grid */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.5rem 0}
+.metric-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem;
+  position:relative;overflow:hidden;transition:all .3s}
+.metric-card:hover{border-color:var(--cyan-dim);transform:translateY(-2px);
+  box-shadow:0 8px 30px #00000040}
+.metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity .3s}
+.metric-card:hover::before{opacity:1}
+.metric-label{font-size:.75rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;
+  font-family:var(--font-mono);margin-bottom:.5rem}
+.metric-value{font-size:2rem;font-weight:700;font-family:var(--font-heading);color:var(--text-bright)}
+.metric-value.cyan{color:var(--cyan)}
+.metric-value.green{color:var(--green)}
+.metric-value.amber{color:var(--amber)}
+.metric-value.red{color:var(--red)}
+.metric-sub{font-size:.75rem;color:var(--text-dim);margin-top:.35rem}
+
+/* Cards / Panels */
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0;
+  transition:all .3s}
+.panel:hover{border-color:var(--border-glow)}
+.panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.panel-title{font-family:var(--font-heading);font-weight:600;color:var(--text-bright);font-size:1rem}
+.panel-badge{font-size:.7rem;padding:.2rem .5rem;border-radius:4px;font-family:var(--font-mono)}
+.badge-critical{background:var(--red-dim);color:var(--red)}
+.badge-warning{background:var(--amber-dim);color:var(--amber)}
+.badge-ok{background:var(--green-dim);color:var(--green)}
+.badge-info{background:var(--cyan-dim);color:var(--cyan)}
+
+/* Purdue Model Visualization */
+.purdue{display:flex;flex-direction:column;gap:4px;margin:1.5rem 0}
+.purdue-level{display:flex;align-items:stretch;gap:0;border-radius:8px;overflow:hidden;
+  transition:all .3s;cursor:pointer;position:relative}
+.purdue-level:hover{transform:scale(1.01);box-shadow:0 4px 20px #00000040}
+.purdue-num{width:60px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);
+  font-weight:700;font-size:1.1rem;color:#000;flex-shrink:0}
+.purdue-content{flex:1;padding:.85rem 1rem;display:flex;justify-content:space-between;align-items:center;
+  background:var(--bg3);border:1px solid var(--border);border-left:none}
+.purdue-content .name{font-family:var(--font-heading);font-weight:600;color:var(--text-bright);font-size:.9rem}
+.purdue-content .desc{font-size:.75rem;color:var(--text-dim);margin-top:2px}
+.purdue-score{font-family:var(--font-mono);font-weight:700;font-size:.85rem}
+.purdue-bar{position:absolute;bottom:0;left:60px;height:2px;transition:width 1s ease}
+
+.l5 .purdue-num{background:#a855f7}.l5 .purdue-bar{background:#a855f7}
+.l4 .purdue-num{background:#3b82f6}.l4 .purdue-bar{background:#3b82f6}
+.l35 .purdue-num{background:#06b6d4;font-size:.8rem}.l35 .purdue-bar{background:#06b6d4}
+.l3 .purdue-num{background:#14b8a6}.l3 .purdue-bar{background:#14b8a6}
+.l2 .purdue-num{background:#22c55e}.l2 .purdue-bar{background:#22c55e}
+.l1 .purdue-num{background:#eab308}.l1 .purdue-bar{background:#eab308}
+.l0 .purdue-num{background:#f97316}.l0 .purdue-bar{background:#f97316}
+
+/* Control Table */
+.ctrl-table{width:100%;border-collapse:collapse;margin:1rem 0}
+.ctrl-table th{text-align:left;padding:.65rem .75rem;font-family:var(--font-mono);font-size:.7rem;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);border-bottom:1px solid var(--border);
+  background:var(--bg3)}
+.ctrl-table td{padding:.6rem .75rem;border-bottom:1px solid var(--border);font-size:.85rem;
+  vertical-align:middle}
+.ctrl-table tr:hover td{background:var(--bg3)}
+.ctrl-id{font-family:var(--font-mono);color:var(--cyan);font-size:.8rem}
+.severity{display:inline-block;padding:.15rem .5rem;border-radius:4px;font-size:.7rem;font-family:var(--font-mono);
+  font-weight:600;text-transform:uppercase}
+.sev-critical{background:var(--red-dim);color:var(--red)}
+.sev-high{background:var(--amber-dim);color:var(--amber)}
+.sev-medium{background:#3b82f640;color:#60a5fa}
+.sev-low{background:var(--green-dim);color:var(--green)}
+.status-impl{color:var(--green)}
+.status-partial{color:var(--amber)}
+.status-missing{color:var(--red)}
+
+/* Compliance Gauge */
+.gauges{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin:1.5rem 0}
+.gauge-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center}
+.gauge-ring{width:120px;height:120px;margin:0 auto 1rem;position:relative}
+.gauge-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.gauge-ring circle{fill:none;stroke-width:8;stroke-linecap:round}
+.gauge-bg{stroke:var(--bg4)}
+.gauge-fill{transition:stroke-dashoffset 1.5s ease}
+.gauge-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-heading);font-size:1.5rem;font-weight:700;color:var(--text-bright)}
+.gauge-label{font-family:var(--font-mono);font-size:.7rem;color:var(--text-dim);text-transform:uppercase;
+  letter-spacing:.08em}
+
+/* Assessment Form */
+.assess-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;margin:1.5rem 0}
+.assess-category{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
+.assess-cat-title{font-family:var(--font-heading);font-weight:600;color:var(--text-bright);margin-bottom:.75rem;
+  display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.assess-cat-title .icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;font-size:.9rem}
+.assess-item{display:flex;align-items:center;gap:.65rem;padding:.5rem 0;border-bottom:1px solid var(--border);
+  font-size:.85rem}
+.assess-item:last-child{border-bottom:none}
+.assess-item label{flex:1;cursor:pointer;color:var(--text)}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle .slider{position:absolute;inset:0;background:var(--bg4);border-radius:22px;cursor:pointer;
+  transition:.3s;border:1px solid var(--border)}
+.toggle .slider::before{content:'';position:absolute;width:16px;height:16px;left:2px;bottom:2px;
+  background:var(--text-dim);border-radius:50%;transition:.3s}
+.toggle input:checked+.slider{background:var(--cyan-dim);border-color:var(--cyan)}
+.toggle input:checked+.slider::before{transform:translateX(18px);background:var(--cyan)}
+
+/* Results panel */
+.result-bar{height:8px;background:var(--bg4);border-radius:4px;overflow:hidden;margin:.5rem 0}
+.result-fill{height:100%;border-radius:4px;transition:width 1s ease}
+.result-fill.green{background:var(--green)}
+.result-fill.amber{background:var(--amber)}
+.result-fill.red{background:var(--red)}
+
+/* Protocol Cards */
+.proto-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin:1.5rem 0}
+.proto-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem;
+  position:relative;overflow:hidden}
+.proto-card::after{content:'';position:absolute;top:0;right:0;width:80px;height:80px;
+  background:radial-gradient(circle at top right,var(--cyan-glow),transparent 70%);pointer-events:none}
+.proto-name{font-family:var(--font-heading);font-weight:700;font-size:1.1rem;color:var(--text-bright)}
+.proto-port{font-family:var(--font-mono);font-size:.75rem;color:var(--cyan);margin-top:2px}
+.proto-risk{margin-top:.75rem;display:flex;align-items:center;gap:.5rem}
+.proto-desc{font-size:.8rem;color:var(--text-dim);margin-top:.5rem;line-height:1.5}
+.proto-checks{margin-top:.75rem}
+.proto-check{font-size:.8rem;padding:.25rem 0;color:var(--text);display:flex;align-items:center;gap:.4rem}
+.proto-check .dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.proto-check .dot.ok{background:var(--green)}
+.proto-check .dot.warn{background:var(--amber)}
+.proto-check .dot.fail{background:var(--red)}
+
+/* Terminal / Log viewer */
+.terminal{background:#000;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:1.5rem 0}
+.terminal-bar{background:var(--bg3);padding:.5rem 1rem;display:flex;align-items:center;gap:.5rem;
+  border-bottom:1px solid var(--border)}
+.terminal-dot{width:10px;height:10px;border-radius:50%}
+.terminal-dot.r{background:#ff5f57}.terminal-dot.y{background:#ffbd2e}.terminal-dot.g{background:#28c840}
+.terminal-title{flex:1;text-align:center;font-family:var(--font-mono);font-size:.75rem;color:var(--text-dim)}
+.terminal-body{padding:1rem;font-family:var(--font-mono);font-size:.8rem;line-height:1.8;
+  max-height:400px;overflow-y:auto;color:var(--green)}
+.terminal-body .prompt{color:var(--cyan)}
+.terminal-body .cmd{color:var(--text-bright)}
+.terminal-body .output{color:var(--text-dim)}
+.terminal-body .warn{color:var(--amber)}
+.terminal-body .err{color:var(--red)}
+.terminal-body .ok{color:var(--green)}
+
+/* Scan Runner */
+.scan-controls{display:flex;gap:1rem;margin:1.5rem 0;flex-wrap:wrap;align-items:center}
+.scan-input{flex:1;min-width:200px;padding:.65rem 1rem;background:var(--bg3);border:1px solid var(--border);
+  border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none;
+  transition:all .3s}
+.scan-input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-glow)}
+.scan-input::placeholder{color:var(--text-dim)}
+select.scan-input{cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235a6e87' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .75rem center;padding-right:2.5rem}
+.scan-btn{padding:.65rem 1.5rem;background:linear-gradient(135deg,var(--cyan),#0080ff);border:none;
+  border-radius:8px;color:#000;font-family:var(--font-heading);font-weight:600;font-size:.85rem;
+  cursor:pointer;transition:all .3s;white-space:nowrap}
+.scan-btn:hover{box-shadow:0 0 25px var(--cyan-glow);transform:translateY(-1px)}
+.scan-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.scan-btn.danger{background:linear-gradient(135deg,var(--red),#cc2040)}
+.scan-btn.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}
+.scan-btn.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
+
+/* Two-column layouts */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+@media(max-width:768px){.two-col{grid-template-columns:1fr}}
+
+/* Topology SVG */
+.topo-container{background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:1.5rem;margin:1.5rem 0;overflow-x:auto}
+.topo-container svg{width:100%;max-width:900px;margin:0 auto;display:block}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-dim)}
+
+/* Footer */
+footer{text-align:center;padding:2rem 0;border-top:1px solid var(--border);margin-top:3rem;
+  font-size:.8rem;color:var(--text-dim)}
+footer a{color:var(--cyan);text-decoration:none}
+
+/* Responsive */
+@media(max-width:600px){
+  header{flex-direction:column;text-align:center}
+  nav{flex-wrap:wrap}
+  nav button{min-width:45%}
+  .metrics{grid-template-columns:1fr 1fr}
+  .gauges{grid-template-columns:1fr 1fr}
+}
+
+/* Loading animation */
+.loading{display:flex;gap:4px;align-items:center}
+.loading span{width:4px;height:16px;background:var(--cyan);border-radius:2px;
+  animation:loadBar .8s ease-in-out infinite alternate}
+.loading span:nth-child(2){animation-delay:.1s}
+.loading span:nth-child(3){animation-delay:.2s}
+.loading span:nth-child(4){animation-delay:.3s}
+@keyframes loadBar{from{transform:scaleY(1)}to{transform:scaleY(2.5);opacity:.5}}
+
+/* Tooltip */
+[data-tip]{position:relative}
+[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:110%;left:50%;transform:translateX(-50%);
+  background:var(--bg4);color:var(--text);padding:.35rem .65rem;border-radius:6px;font-size:.75rem;
+  white-space:nowrap;z-index:99;border:1px solid var(--border);font-family:var(--font-mono)}
+</style>
+</head>
+<body>
+<div class="orb2"></div>
+<div id="app">
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="4" width="40" height="40" rx="8" stroke="#00f0ff" stroke-width="2" fill="#00f0ff10"/>
+        <path d="M24 12v6m0 12v6M12 24h6m12 0h6" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="24" cy="24" r="6" stroke="#00f0ff" stroke-width="2" fill="#00f0ff20"/>
+        <circle cx="24" cy="24" r="2" fill="#00f0ff"/>
+        <path d="M16 16l3 3m10 10l3 3M32 16l-3 3M16 32l3-3" stroke="#00f0ff" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+      </svg>
+    </div>
+    <div>
+      <h1>ICS/IoT/OT Hardening Framework</h1>
+      <span>Industrial Security Operations Center</span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <div class="status-badge"><div class="status-dot"></div>Framework Active</div>
+    <a href="https://github.com/SiteQ8/ics-iot-ot-hardening" class="gh-btn" target="_blank">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.204.085 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.418-1.305.762-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.605-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/></svg>
+      GitHub
+    </a>
+  </div>
+</header>
+
+<!-- NAVIGATION -->
+<nav id="mainNav">
+  <button class="active" data-tab="overview">Overview</button>
+  <button data-tab="assessment">Assessment</button>
+  <button data-tab="network">Network</button>
+  <button data-tab="compliance">Compliance</button>
+  <button data-tab="scanner">Scanner</button>
+  <button data-tab="protocols">Protocols</button>
+</nav>
+
+<!-- ===================== OVERVIEW TAB ===================== -->
+<div class="tab-panel active" id="tab-overview">
+  <h2 class="section-title">Security Posture <span class="tag">Real-time</span></h2>
+  <div class="metrics" id="metricsGrid"></div>
+
+  <h2 class="section-title">Purdue Model — Security by Zone</h2>
+  <div class="purdue" id="purdueModel"></div>
+
+  <div class="two-col">
+    <div>
+      <h2 class="section-title">Recent Findings <span class="tag">Top 8</span></h2>
+      <div class="panel" style="max-height:380px;overflow-y:auto">
+        <table class="ctrl-table" id="findingsTable">
+          <thead><tr><th>ID</th><th>Finding</th><th>Severity</th><th>Status</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h2 class="section-title">Network Topology</h2>
+      <div class="topo-container" id="topoContainer"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ASSESSMENT TAB ===================== -->
+<div class="tab-panel" id="tab-assessment">
+  <h2 class="section-title">Security Assessment <span class="tag">Interactive</span></h2>
+  <p style="color:var(--text-dim);margin-bottom:1rem">Toggle controls to assess your ICS/OT environment. Results update in real-time.</p>
+  <div class="assess-grid" id="assessGrid"></div>
+  <div class="panel" style="margin-top:1.5rem">
+    <div class="panel-header">
+      <span class="panel-title">Assessment Results</span>
+      <span class="panel-badge badge-info" id="assessScore">0%</span>
+    </div>
+    <div id="assessResults"></div>
+  </div>
+</div>
+
+<!-- ===================== NETWORK TAB ===================== -->
+<div class="tab-panel" id="tab-network">
+  <h2 class="section-title">Network Security <span class="tag">Firewall & Segmentation</span></h2>
+  <div class="scan-controls">
+    <input class="scan-input" id="fwNetwork" placeholder="Network CIDR (e.g. 10.0.0.0/16)" value="10.100.0.0/16">
+    <select class="scan-input" id="fwArch" style="max-width:200px">
+      <option value="purdue">Purdue Model</option>
+      <option value="iec62443">IEC 62443 Zones</option>
+      <option value="flat">Flat Network</option>
+    </select>
+    <button class="scan-btn" onclick="generateFirewall()">Generate Rules</button>
+  </div>
+  <div class="terminal" id="fwTerminal" style="display:none">
+    <div class="terminal-bar">
+      <div class="terminal-dot r"></div><div class="terminal-dot y"></div><div class="terminal-dot g"></div>
+      <span class="terminal-title">Firewall Rule Generator — ics-fw-gen v2.0</span>
+    </div>
+    <div class="terminal-body" id="fwOutput"></div>
+  </div>
+</div>
+
+<!-- ===================== COMPLIANCE TAB ===================== -->
+<div class="tab-panel" id="tab-compliance">
+  <h2 class="section-title">Compliance Dashboard <span class="tag">Multi-Standard</span></h2>
+  <div class="gauges" id="complianceGauges"></div>
+  <h2 class="section-title" style="font-size:1.25rem">Control Mapping</h2>
+  <div class="panel">
+    <table class="ctrl-table" id="complianceTable">
+      <thead><tr><th>Standard</th><th>Domain</th><th>Controls</th><th>Implemented</th><th>Gap</th><th>Score</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===================== SCANNER TAB ===================== -->
+<div class="tab-panel" id="tab-scanner">
+  <h2 class="section-title">Vulnerability Scanner <span class="tag">Demo Mode</span></h2>
+  <div class="scan-controls">
+    <input class="scan-input" id="scanTarget" placeholder="Target IP / CIDR (e.g. 192.168.1.0/24)" value="10.100.50.0/24">
+    <select class="scan-input" id="scanType" style="max-width:200px">
+      <option value="full">Full ICS Scan</option>
+      <option value="quick">Quick Recon</option>
+      <option value="protocol">Protocol Analysis</option>
+      <option value="firmware">Firmware Check</option>
+    </select>
+    <button class="scan-btn" id="scanBtn" onclick="runScan()">Launch Scan</button>
+  </div>
+  <div class="terminal" id="scanTerminal" style="display:none">
+    <div class="terminal-bar">
+      <div class="terminal-dot r"></div><div class="terminal-dot y"></div><div class="terminal-dot g"></div>
+      <span class="terminal-title">ICS Vulnerability Scanner — ics-vuln-scan v3.0</span>
+    </div>
+    <div class="terminal-body" id="scanOutput"></div>
+  </div>
+</div>
+
+<!-- ===================== PROTOCOLS TAB ===================== -->
+<div class="tab-panel" id="tab-protocols">
+  <h2 class="section-title">ICS Protocol Security <span class="tag">12 Protocols</span></h2>
+  <div class="proto-grid" id="protoGrid"></div>
+</div>
+
+<footer>
+  <strong>ICS/IoT/OT Hardening Framework v2.0</strong> — Built by <a href="https://github.com/SiteQ8" target="_blank">Ali AlEnezi (SiteQ8)</a><br>
+  Aligned with NIST SP 800-82 · IEC 62443 · NERC CIP · MITRE ATT&CK for ICS · CIS Controls<br>
+  <span style="opacity:.5">MIT License · Made in Kuwait 🇰🇼</span>
+</footer>
+</div>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────
+const METRICS = [
+  {label:'Total Controls',value:'1,247',color:'cyan',sub:'Across 7 standards'},
+  {label:'Implemented',value:'892',color:'green',sub:'71.5% coverage'},
+  {label:'Critical Gaps',value:'23',color:'red',sub:'Requires immediate action'},
+  {label:'Warnings',value:'87',color:'amber',sub:'Medium priority'},
+  {label:'Assets Monitored',value:'2,461',color:'cyan',sub:'PLCs, RTUs, HMIs, Sensors'},
+  {label:'Attack Surface',value:'Low',color:'green',sub:'Network segments isolated'},
+];
+
+const PURDUE = [
+  {level:'L5',cls:'l5',name:'Enterprise Network',desc:'ERP, Email, Business Apps',score:94,w:'94%'},
+  {level:'L4',cls:'l4',name:'Site Business Planning',desc:'Historian, OPC Gateway, Reporting',score:87,w:'87%'},
+  {level:'DMZ',cls:'l35',name:'Industrial DMZ',desc:'Jump Servers, Patch Mgmt, AV Relay',score:91,w:'91%'},
+  {level:'L3',cls:'l3',name:'Site Operations',desc:'SCADA Servers, HMI Servers, Engineering WS',score:78,w:'78%'},
+  {level:'L2',cls:'l2',name:'Area Supervisory',desc:'HMI Panels, Area Control, Alarms',score:72,w:'72%'},
+  {level:'L1',cls:'l1',name:'Basic Control',desc:'PLCs, RTUs, DCS Controllers',score:65,w:'65%'},
+  {level:'L0',cls:'l0',name:'Physical Process',desc:'Sensors, Actuators, Field Devices',score:58,w:'58%'},
+];
+
+const FINDINGS = [
+  {id:'ICS-2024-001',desc:'Modbus TCP unauthenticated access on PLC subnet',sev:'critical',status:'missing'},
+  {id:'ICS-2024-002',desc:'Default credentials on Siemens S7-1500 engineering portal',sev:'critical',status:'missing'},
+  {id:'ICS-2024-003',desc:'Unencrypted OPC UA connections between L3-L4',sev:'high',status:'partial'},
+  {id:'ICS-2024-004',desc:'Missing firmware validation on RTU field devices',sev:'high',status:'partial'},
+  {id:'ICS-2024-005',desc:'DNP3 Secure Authentication not enabled',sev:'high',status:'missing'},
+  {id:'ICS-2024-006',desc:'Historian database exposed to enterprise network',sev:'medium',status:'partial'},
+  {id:'ICS-2024-007',desc:'HMI workstations running outdated Windows builds',sev:'medium',status:'partial'},
+  {id:'ICS-2024-008',desc:'No network anomaly detection in L1-L2 segments',sev:'high',status:'missing'},
+];
+
+const ASSESS_CATEGORIES = [
+  {name:'Network Segmentation',icon:'🔀',color:'var(--cyan)',items:[
+    'Purdue model zone separation enforced','Firewall rules between IT/OT','Industrial DMZ deployed',
+    'Micro-segmentation in control zones','Network traffic whitelisting']},
+  {name:'Access Control',icon:'🔐',color:'var(--purple)',items:[
+    'Multi-factor authentication for remote access','Role-based access control (RBAC)','Privileged access management',
+    'Default credentials eliminated','Session timeout policies']},
+  {name:'Endpoint Hardening',icon:'🛡️',color:'var(--green)',items:[
+    'USB port restrictions on HMIs','Application whitelisting','Host-based firewall on engineering WS',
+    'Patch management for ICS assets','Antivirus/EDR on Windows nodes']},
+  {name:'Monitoring & Detection',icon:'📡',color:'var(--amber)',items:[
+    'SIEM integration for OT events','Network anomaly detection','ICS protocol deep inspection',
+    'Asset inventory auto-discovery','Alert triage and escalation']},
+  {name:'Incident Response',icon:'🚨',color:'var(--red)',items:[
+    'ICS-specific IR playbooks','Backup & recovery for controllers','Communication plan for OT incidents',
+    'Forensic readiness procedures','Tabletop exercises conducted']},
+  {name:'Physical Security',icon:'🏭',color:'#06b6d4',items:[
+    'Physical access controls for cabinets','Video surveillance of control rooms','Environmental monitoring',
+    'Tamper detection on field devices','Visitor management procedures']},
+];
+
+const COMPLIANCE = [
+  {std:'NIST SP 800-82',domains:[
+    {name:'Access Control',total:22,impl:18},{name:'Audit & Accountability',total:16,impl:12},
+    {name:'Configuration Mgmt',total:14,impl:11},{name:'Incident Response',total:10,impl:7},
+    {name:'System & Comm Protection',total:20,impl:15}]},
+  {std:'IEC 62443',domains:[
+    {name:'FR1 – Identification',total:18,impl:15},{name:'FR2 – Use Control',total:14,impl:10},
+    {name:'FR3 – System Integrity',total:16,impl:12},{name:'FR4 – Data Confidentiality',total:12,impl:9},
+    {name:'FR5 – Data Flow',total:10,impl:7},{name:'FR6 – Event Response',total:14,impl:10},
+    {name:'FR7 – Resource Avail.',total:12,impl:9}]},
+  {std:'NERC CIP',domains:[
+    {name:'CIP-002 Asset ID',total:8,impl:7},{name:'CIP-003 Security Mgmt',total:12,impl:9},
+    {name:'CIP-005 Electronic Perimeter',total:10,impl:8},{name:'CIP-007 System Security',total:14,impl:10},
+    {name:'CIP-010 Config Mgmt',total:10,impl:7},{name:'CIP-011 Info Protection',total:8,impl:6}]},
+  {std:'MITRE ATT&CK for ICS',domains:[
+    {name:'Initial Access',total:12,impl:9},{name:'Execution',total:10,impl:7},
+    {name:'Persistence',total:8,impl:5},{name:'Lateral Movement',total:14,impl:10},
+    {name:'Inhibit Response',total:10,impl:6},{name:'Impair Process',total:12,impl:8}]},
+  {std:'CIS Controls v8',domains:[
+    {name:'Asset Inventory',total:6,impl:5},{name:'Software Inventory',total:6,impl:4},
+    {name:'Data Protection',total:8,impl:6},{name:'Account Management',total:10,impl:8},
+    {name:'Audit Log Mgmt',total:8,impl:6},{name:'Network Monitoring',total:10,impl:7}]},
+];
+
+const PROTOCOLS = [
+  {name:'Modbus TCP/RTU',port:'502',risk:'critical',desc:'Serial & TCP industrial protocol. No built-in authentication or encryption.',
+    checks:[{t:'Authentication',s:'fail'},{t:'Encryption',s:'fail'},{t:'Input Validation',s:'warn'},{t:'Access Control',s:'warn'}]},
+  {name:'DNP3',port:'20000',risk:'high',desc:'Distributed Network Protocol for utility SCADA. Supports Secure Auth v5.',
+    checks:[{t:'Secure Auth v5',s:'warn'},{t:'TLS Wrapping',s:'fail'},{t:'Sequence Validation',s:'ok'},{t:'Broadcast Control',s:'warn'}]},
+  {name:'IEC 61850 MMS',port:'102',risk:'high',desc:'Manufacturing Message Specification for substation automation.',
+    checks:[{t:'GOOSE Auth',s:'fail'},{t:'MMS TLS',s:'warn'},{t:'SV Validation',s:'fail'},{t:'Access Point Config',s:'ok'}]},
+  {name:'OPC UA',port:'4840',risk:'medium',desc:'Unified Architecture with built-in security model. Modern ICS standard.',
+    checks:[{t:'X.509 Certificates',s:'ok'},{t:'Channel Encryption',s:'ok'},{t:'User Auth',s:'ok'},{t:'Audit Logging',s:'warn'}]},
+  {name:'EtherNet/IP (CIP)',port:'44818',risk:'high',desc:'Common Industrial Protocol over Ethernet. Widely used in manufacturing.',
+    checks:[{t:'CIP Security',s:'warn'},{t:'TLS/DTLS',s:'fail'},{t:'Device Auth',s:'fail'},{t:'Firmware Validation',s:'warn'}]},
+  {name:'BACnet/IP',port:'47808',risk:'high',desc:'Building automation protocol. Minimal native security.',
+    checks:[{t:'Authentication',s:'fail'},{t:'Encryption',s:'fail'},{t:'Network Segmentation',s:'warn'},{t:'Object Access',s:'warn'}]},
+  {name:'MQTT',port:'1883/8883',risk:'medium',desc:'Lightweight IoT messaging protocol. TLS support available.',
+    checks:[{t:'TLS Transport',s:'ok'},{t:'Client Certificates',s:'warn'},{t:'ACL Policies',s:'ok'},{t:'Payload Encrypt',s:'warn'}]},
+  {name:'CoAP',port:'5683/5684',risk:'medium',desc:'Constrained Application Protocol for IoT devices. DTLS support.',
+    checks:[{t:'DTLS Binding',s:'warn'},{t:'OSCORE',s:'fail'},{t:'Token Auth',s:'ok'},{t:'Blockwise Transfer',s:'ok'}]},
+  {name:'PROFINET',port:'Dynamic',risk:'high',desc:'Siemens real-time Ethernet protocol for factory automation.',
+    checks:[{t:'Integrity Class',s:'warn'},{t:'Network Isolation',s:'ok'},{t:'DCP Protection',s:'fail'},{t:'Alarm Filtering',s:'warn'}]},
+  {name:'S7comm/S7comm+',port:'102',risk:'critical',desc:'Siemens proprietary PLC protocol. S7comm+ adds crypto support.',
+    checks:[{t:'S7comm+ Upgrade',s:'warn'},{t:'Access Protection',s:'warn'},{t:'TLS Channel',s:'fail'},{t:'PLC Password',s:'ok'}]},
+  {name:'IEC 60870-5-104',port:'2404',risk:'high',desc:'Telecontrol protocol for power systems SCADA over TCP/IP.',
+    checks:[{t:'TLS Wrapper',s:'fail'},{t:'Sequence Numbers',s:'ok'},{t:'Allowlisting',s:'warn'},{t:'Time Sync Auth',s:'fail'}]},
+  {name:'HART-IP',port:'5094',risk:'medium',desc:'Highway Addressable Remote Transducer protocol for field instrumentation.',
+    checks:[{t:'Authentication',s:'fail'},{t:'Encryption',s:'fail'},{t:'Access Restriction',s:'warn'},{t:'Session Mgmt',s:'warn'}]},
+];
+
+// ── RENDER FUNCTIONS ────────────────────────────────────────
+function renderMetrics(){
+  const g=document.getElementById('metricsGrid');
+  g.innerHTML=METRICS.map(m=>`
+    <div class="metric-card">
+      <div class="metric-label">${m.label}</div>
+      <div class="metric-value ${m.color}">${m.value}</div>
+      <div class="metric-sub">${m.sub}</div>
+    </div>`).join('');
+}
+
+function renderPurdue(){
+  const g=document.getElementById('purdueModel');
+  g.innerHTML=PURDUE.map(p=>`
+    <div class="purdue-level ${p.cls}">
+      <div class="purdue-num">${p.level}</div>
+      <div class="purdue-content">
+        <div><div class="name">${p.name}</div><div class="desc">${p.desc}</div></div>
+        <div class="purdue-score" style="color:${p.score>=80?'var(--green)':p.score>=65?'var(--amber)':'var(--red)'}">${p.score}%</div>
+      </div>
+      <div class="purdue-bar" style="width:${p.w}"></div>
+    </div>`).join('');
+}
+
+function renderFindings(){
+  const tb=document.querySelector('#findingsTable tbody');
+  tb.innerHTML=FINDINGS.map(f=>`
+    <tr>
+      <td class="ctrl-id">${f.id}</td>
+      <td>${f.desc}</td>
+      <td><span class="severity sev-${f.sev}">${f.sev}</span></td>
+      <td class="status-${f.status}">${f.status==='missing'?'✗ Open':f.status==='partial'?'◐ Partial':'✓ Done'}</td>
+    </tr>`).join('');
+}
+
+function renderTopology(){
+  document.getElementById('topoContainer').innerHTML=`
+  <svg viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg" style="font-family:var(--font-mono)">
+    <defs>
+      <linearGradient id="gCyan" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00f0ff30"/><stop offset="100%" stop-color="#00f0ff05"/></linearGradient>
+      <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <!-- Zones -->
+    <rect x="10" y="10" width="780" height="65" rx="8" fill="#a855f710" stroke="#a855f740" stroke-dasharray="4"/>
+    <text x="25" y="38" fill="#a855f7" font-size="10" font-weight="bold">L5 — ENTERPRISE</text>
+    <rect x="10" y="85" width="780" height="65" rx="8" fill="#3b82f610" stroke="#3b82f640" stroke-dasharray="4"/>
+    <text x="25" y="113" fill="#3b82f6" font-size="10" font-weight="bold">L4 — SITE BUSINESS</text>
+    <rect x="10" y="160" width="780" height="50" rx="8" fill="#06b6d410" stroke="#06b6d440" stroke-width="2"/>
+    <text x="25" y="183" fill="#06b6d4" font-size="10" font-weight="bold">DMZ — INDUSTRIAL DMZ</text>
+    <rect x="10" y="220" width="780" height="65" rx="8" fill="#14b8a610" stroke="#14b8a640" stroke-dasharray="4"/>
+    <text x="25" y="248" fill="#14b8a6" font-size="10" font-weight="bold">L3 — OPERATIONS</text>
+    <rect x="10" y="295" width="780" height="55" rx="8" fill="#22c55e10" stroke="#22c55e40" stroke-dasharray="4"/>
+    <text x="25" y="318" fill="#22c55e" font-size="10" font-weight="bold">L2 — SUPERVISORY</text>
+    <rect x="10" y="360" width="780" height="50" rx="8" fill="#eab30810" stroke="#eab30840" stroke-dasharray="4"/>
+    <text x="25" y="383" fill="#eab308" font-size="10" font-weight="bold">L1/L0 — CONTROL & PROCESS</text>
+    <!-- Nodes -->
+    <g filter="url(#glow)">
+      <rect x="200" y="22" width="90" height="36" rx="6" fill="#0f1520" stroke="#a855f7" stroke-width="1.5"/><text x="245" y="44" fill="#c8d6e5" font-size="9" text-anchor="middle">ERP Server</text>
+      <rect x="370" y="22" width="90" height="36" rx="6" fill="#0f1520" stroke="#a855f7" stroke-width="1.5"/><text x="415" y="44" fill="#c8d6e5" font-size="9" text-anchor="middle">Email Server</text>
+      <rect x="540" y="22" width="90" height="36" rx="6" fill="#0f1520" stroke="#a855f7" stroke-width="1.5"/><text x="585" y="44" fill="#c8d6e5" font-size="9" text-anchor="middle">Corp Firewall</text>
+      <rect x="160" y="97" width="100" height="36" rx="6" fill="#0f1520" stroke="#3b82f6" stroke-width="1.5"/><text x="210" y="119" fill="#c8d6e5" font-size="9" text-anchor="middle">Historian DB</text>
+      <rect x="340" y="97" width="100" height="36" rx="6" fill="#0f1520" stroke="#3b82f6" stroke-width="1.5"/><text x="390" y="119" fill="#c8d6e5" font-size="9" text-anchor="middle">OPC Gateway</text>
+      <rect x="520" y="97" width="100" height="36" rx="6" fill="#0f1520" stroke="#3b82f6" stroke-width="1.5"/><text x="570" y="119" fill="#c8d6e5" font-size="9" text-anchor="middle">Reporting Srv</text>
+      <rect x="250" y="168" width="110" height="30" rx="5" fill="#06b6d420" stroke="#06b6d4" stroke-width="2"/><text x="305" y="187" fill="#06b6d4" font-size="9" text-anchor="middle" font-weight="bold">Jump Server</text>
+      <rect x="440" y="168" width="110" height="30" rx="5" fill="#06b6d420" stroke="#06b6d4" stroke-width="2"/><text x="495" y="187" fill="#06b6d4" font-size="9" text-anchor="middle" font-weight="bold">Patch Relay</text>
+      <rect x="150" y="232" width="100" height="36" rx="6" fill="#0f1520" stroke="#14b8a6" stroke-width="1.5"/><text x="200" y="254" fill="#c8d6e5" font-size="9" text-anchor="middle">SCADA Server</text>
+      <rect x="330" y="232" width="100" height="36" rx="6" fill="#0f1520" stroke="#14b8a6" stroke-width="1.5"/><text x="380" y="254" fill="#c8d6e5" font-size="9" text-anchor="middle">HMI Server</text>
+      <rect x="510" y="232" width="110" height="36" rx="6" fill="#0f1520" stroke="#14b8a6" stroke-width="1.5"/><text x="565" y="254" fill="#c8d6e5" font-size="9" text-anchor="middle">Engineering WS</text>
+      <rect x="180" y="303" width="80" height="32" rx="6" fill="#0f1520" stroke="#22c55e" stroke-width="1.5"/><text x="220" y="323" fill="#c8d6e5" font-size="8" text-anchor="middle">HMI Panel</text>
+      <rect x="320" y="303" width="80" height="32" rx="6" fill="#0f1520" stroke="#22c55e" stroke-width="1.5"/><text x="360" y="323" fill="#c8d6e5" font-size="8" text-anchor="middle">Area Ctrl</text>
+      <rect x="460" y="303" width="80" height="32" rx="6" fill="#0f1520" stroke="#22c55e" stroke-width="1.5"/><text x="500" y="323" fill="#c8d6e5" font-size="8" text-anchor="middle">Alarm Srv</text>
+      <rect x="600" y="303" width="80" height="32" rx="6" fill="#0f1520" stroke="#22c55e" stroke-width="1.5"/><text x="640" y="323" fill="#c8d6e5" font-size="8" text-anchor="middle">Data Coll.</text>
+      <rect x="140" y="370" width="70" height="28" rx="5" fill="#0f1520" stroke="#eab308" stroke-width="1.5"/><text x="175" y="388" fill="#c8d6e5" font-size="8" text-anchor="middle">PLC #1</text>
+      <rect x="240" y="370" width="70" height="28" rx="5" fill="#0f1520" stroke="#eab308" stroke-width="1.5"/><text x="275" y="388" fill="#c8d6e5" font-size="8" text-anchor="middle">PLC #2</text>
+      <rect x="340" y="370" width="70" height="28" rx="5" fill="#0f1520" stroke="#eab308" stroke-width="1.5"/><text x="375" y="388" fill="#c8d6e5" font-size="8" text-anchor="middle">RTU #1</text>
+      <rect x="440" y="370" width="70" height="28" rx="5" fill="#0f1520" stroke="#eab308" stroke-width="1.5"/><text x="475" y="388" fill="#c8d6e5" font-size="8" text-anchor="middle">RTU #2</text>
+      <rect x="540" y="370" width="70" height="28" rx="5" fill="#0f1520" stroke="#f97316" stroke-width="1.5"/><text x="575" y="388" fill="#c8d6e5" font-size="8" text-anchor="middle">Sensors</text>
+      <rect x="640" y="370" width="80" height="28" rx="5" fill="#0f1520" stroke="#f97316" stroke-width="1.5"/><text x="680" y="388" fill="#c8d6e5" font-size="8" text-anchor="middle">Actuators</text>
+    </g>
+    <!-- Connection lines -->
+    <g stroke="#1e2a4080" stroke-width="1" stroke-dasharray="3">
+      <line x1="245" y1="58" x2="305" y2="168"/><line x1="415" y1="58" x2="305" y2="168"/>
+      <line x1="210" y1="133" x2="305" y2="168"/><line x1="390" y1="133" x2="495" y2="168"/>
+      <line x1="570" y1="133" x2="495" y2="168"/>
+      <line x1="305" y1="198" x2="200" y2="232"/><line x1="305" y1="198" x2="380" y2="232"/>
+      <line x1="495" y1="198" x2="565" y2="232"/>
+      <line x1="200" y1="268" x2="220" y2="303"/><line x1="380" y1="268" x2="360" y2="303"/>
+      <line x1="565" y1="268" x2="500" y2="303"/><line x1="565" y1="268" x2="640" y2="303"/>
+      <line x1="220" y1="335" x2="175" y2="370"/><line x1="220" y1="335" x2="275" y2="370"/>
+      <line x1="360" y1="335" x2="375" y2="370"/><line x1="500" y1="335" x2="475" y2="370"/>
+      <line x1="640" y1="335" x2="575" y2="370"/><line x1="640" y1="335" x2="680" y2="370"/>
+    </g>
+    <!-- Firewall icons -->
+    <g fill="#ff386080" font-size="14">
+      <text x="305" y="162" text-anchor="middle">🔥</text>
+      <text x="495" y="162" text-anchor="middle">🔥</text>
+    </g>
+  </svg>`;
+}
+
+function renderAssessment(){
+  const g=document.getElementById('assessGrid');
+  g.innerHTML=ASSESS_CATEGORIES.map((cat,ci)=>`
+    <div class="assess-category">
+      <div class="assess-cat-title">
+        <div class="icon" style="background:${cat.color}20;color:${cat.color}">${cat.icon}</div>
+        ${cat.name}
+      </div>
+      ${cat.items.map((item,ii)=>`
+        <div class="assess-item">
+          <label for="a${ci}_${ii}">${item}</label>
+          <label class="toggle"><input type="checkbox" id="a${ci}_${ii}" onchange="calcAssess()"><span class="slider"></span></label>
+        </div>`).join('')}
+    </div>`).join('');
+  calcAssess();
+}
+
+function calcAssess(){
+  const all=document.querySelectorAll('.assess-item input[type=checkbox]');
+  const checked=[...all].filter(c=>c.checked).length;
+  const pct=Math.round(checked/all.length*100);
+  const scoreEl=document.getElementById('assessScore');
+  scoreEl.textContent=pct+'%';
+  scoreEl.className='panel-badge '+(pct>=80?'badge-ok':pct>=50?'badge-warning':'badge-critical');
+  const res=document.getElementById('assessResults');
+  const cats=ASSESS_CATEGORIES.map((cat,ci)=>{
+    const items=cat.items.length;
+    const done=[...document.querySelectorAll(`.assess-item input[id^="a${ci}_"]:checked`)].length;
+    const p=Math.round(done/items*100);
+    return `<div style="margin-bottom:.75rem">
+      <div style="display:flex;justify-content:space-between;font-size:.85rem"><span>${cat.icon} ${cat.name}</span><span style="font-family:var(--font-mono);color:${p>=80?'var(--green)':p>=50?'var(--amber)':'var(--red)'}">${done}/${items} (${p}%)</span></div>
+      <div class="result-bar"><div class="result-fill ${p>=80?'green':p>=50?'amber':'red'}" style="width:${p}%"></div></div>
+    </div>`;
+  });
+  res.innerHTML=`
+    <div style="font-size:2rem;font-weight:700;font-family:var(--font-heading);color:${pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--red)';margin-bottom:1rem}">${pct}% Overall Compliance</div>
+    ${cats.join('')}
+    <div style="margin-top:1rem;padding:.75rem;border-radius:8px;background:${pct>=80?'var(--green-dim)':pct>=50?'var(--amber-dim)':'var(--red-dim)'};font-size:.85rem;color:${pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--red)'}">
+      ${pct>=80?'✓ Strong security posture. Continue monitoring and improving.':pct>=50?'⚠ Moderate gaps detected. Prioritize critical control implementations.':'✗ Significant security gaps. Immediate remediation required for critical controls.'}
+    </div>`;
+}
+
+function renderCompliance(){
+  // Gauges
+  const gg=document.getElementById('complianceGauges');
+  const circ=2*Math.PI*52;
+  gg.innerHTML=COMPLIANCE.map(s=>{
+    const total=s.domains.reduce((a,d)=>a+d.total,0);
+    const impl=s.domains.reduce((a,d)=>a+d.impl,0);
+    const pct=Math.round(impl/total*100);
+    const clr=pct>=80?'var(--green)':pct>=60?'var(--amber)':'var(--red)';
+    const offset=circ-(circ*pct/100);
+    return `<div class="gauge-card">
+      <div class="gauge-ring">
+        <svg viewBox="0 0 120 120"><circle class="gauge-bg" cx="60" cy="60" r="52"/>
+        <circle class="gauge-fill" cx="60" cy="60" r="52" stroke="${clr}" stroke-dasharray="${circ}" stroke-dashoffset="${offset}"/></svg>
+        <div class="gauge-pct">${pct}%</div>
+      </div>
+      <div class="gauge-label">${s.std}</div>
+    </div>`;
+  }).join('');
+  // Table
+  const tb=document.querySelector('#complianceTable tbody');
+  tb.innerHTML=COMPLIANCE.flatMap(s=>s.domains.map(d=>{
+    const gap=d.total-d.impl;const pct=Math.round(d.impl/d.total*100);
+    return `<tr>
+      <td style="font-family:var(--font-mono);font-size:.8rem;color:var(--cyan)">${s.std}</td>
+      <td>${d.name}</td><td>${d.total}</td><td>${d.impl}</td>
+      <td><span class="severity ${gap>3?'sev-critical':gap>1?'sev-high':'sev-low'}">${gap}</span></td>
+      <td style="color:${pct>=80?'var(--green)':pct>=60?'var(--amber)':'var(--red)'}">${pct}%</td>
+    </tr>`;
+  })).join('');
+}
+
+function renderProtocols(){
+  const g=document.getElementById('protoGrid');
+  g.innerHTML=PROTOCOLS.map(p=>`
+    <div class="proto-card">
+      <div class="proto-name">${p.name}</div>
+      <div class="proto-port">Port ${p.port}</div>
+      <div class="proto-risk"><span class="severity sev-${p.risk}">${p.risk} risk</span></div>
+      <div class="proto-desc">${p.desc}</div>
+      <div class="proto-checks">
+        ${p.checks.map(c=>`<div class="proto-check"><span class="dot ${c.s}"></span>${c.t}: <span style="color:${c.s==='ok'?'var(--green)':c.s==='warn'?'var(--amber)':'var(--red)'};font-weight:600">${c.s==='ok'?'Secure':c.s==='warn'?'Review':'Vulnerable'}</span></div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// ── INTERACTIVE SCANNERS ────────────────────────────────────
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+
+async function generateFirewall(){
+  const net=document.getElementById('fwNetwork').value||'10.100.0.0/16';
+  const arch=document.getElementById('fwArch').value;
+  const term=document.getElementById('fwTerminal');
+  const out=document.getElementById('fwOutput');
+  term.style.display='block';out.innerHTML='';
+  const lines=[
+    {t:'prompt',c:'$ '},
+    {t:'cmd',c:`ics-fw-gen --network ${net} --architecture ${arch} --standard iec62443`},
+    {t:'',c:''},
+    {t:'ok',c:`[+] ICS Firewall Rule Generator v2.0 — AlEnezi Security Framework`},
+    {t:'output',c:`[*] Architecture: ${arch==='purdue'?'Purdue Model (7 Zones)':arch==='iec62443'?'IEC 62443 Zones & Conduits':'Flat Network Migration'}`},
+    {t:'output',c:`[*] Base network: ${net}`},
+    {t:'',c:''},
+    {t:'ok',c:'[+] Generating zone subnets...'},
+    {t:'output',c:`    Zone L5 (Enterprise):    ${net.replace('.0.0/16','.10.0/24')}`},
+    {t:'output',c:`    Zone L4 (Site Business): ${net.replace('.0.0/16','.20.0/24')}`},
+    {t:'output',c:`    Zone DMZ (Industrial):   ${net.replace('.0.0/16','.30.0/24')}`},
+    {t:'output',c:`    Zone L3 (Operations):    ${net.replace('.0.0/16','.40.0/24')}`},
+    {t:'output',c:`    Zone L2 (Supervisory):   ${net.replace('.0.0/16','.50.0/24')}`},
+    {t:'output',c:`    Zone L1 (Basic Control): ${net.replace('.0.0/16','.60.0/24')}`},
+    {t:'output',c:`    Zone L0 (Process):       ${net.replace('.0.0/16','.70.0/24')}`},
+    {t:'',c:''},
+    {t:'ok',c:'[+] Generating firewall rules (iptables + Cisco ASA)...'},
+    {t:'',c:''},
+    {t:'warn',c:'# ═══════════════════════════════════════════════════════════'},
+    {t:'warn',c:'# ICS FIREWALL RULES — Generated by ics-fw-gen v2.0'},
+    {t:'warn',c:'# Standard: IEC 62443 | Architecture: '+arch},
+    {t:'warn',c:'# ═══════════════════════════════════════════════════════════'},
+    {t:'',c:''},
+    {t:'output',c:'# — DENY ALL DEFAULT —'},
+    {t:'cmd',c:'iptables -P INPUT DROP'},
+    {t:'cmd',c:'iptables -P FORWARD DROP'},
+    {t:'cmd',c:'iptables -P OUTPUT DROP'},
+    {t:'',c:''},
+    {t:'output',c:'# — L5 ↔ DMZ (Restricted Business Traffic) —'},
+    {t:'cmd',c:`iptables -A FORWARD -s ${net.replace('.0.0/16','.10.0/24')} -d ${net.replace('.0.0/16','.30.0/24')} -p tcp --dport 443 -j ACCEPT`},
+    {t:'cmd',c:`iptables -A FORWARD -s ${net.replace('.0.0/16','.10.0/24')} -d ${net.replace('.0.0/16','.30.0/24')} -p tcp --dport 3389 -j ACCEPT  # RDP to Jump`},
+    {t:'',c:''},
+    {t:'output',c:'# — DMZ ↔ L3 (Controlled OT Access) —'},
+    {t:'cmd',c:`iptables -A FORWARD -s ${net.replace('.0.0/16','.30.0/24')} -d ${net.replace('.0.0/16','.40.0/24')} -p tcp --dport 4840 -j ACCEPT  # OPC UA`},
+    {t:'cmd',c:`iptables -A FORWARD -s ${net.replace('.0.0/16','.30.0/24')} -d ${net.replace('.0.0/16','.40.0/24')} -p tcp --dport 502 -j DROP     # Block Modbus from DMZ`},
+    {t:'',c:''},
+    {t:'output',c:'# — L3 ↔ L2 (SCADA to Supervisory) —'},
+    {t:'cmd',c:`iptables -A FORWARD -s ${net.replace('.0.0/16','.40.0/24')} -d ${net.replace('.0.0/16','.50.0/24')} -p tcp --dport 502 -j ACCEPT   # Modbus TCP`},
+    {t:'cmd',c:`iptables -A FORWARD -s ${net.replace('.0.0/16','.40.0/24')} -d ${net.replace('.0.0/16','.50.0/24')} -p tcp --dport 20000 -j ACCEPT # DNP3`},
+    {t:'',c:''},
+    {t:'output',c:'# — L2 ↔ L1 (Supervisory to Control) —'},
+    {t:'cmd',c:`iptables -A FORWARD -s ${net.replace('.0.0/16','.50.0/24')} -d ${net.replace('.0.0/16','.60.0/24')} -p tcp --dport 102 -j ACCEPT   # S7comm`},
+    {t:'cmd',c:`iptables -A FORWARD -s ${net.replace('.0.0/16','.50.0/24')} -d ${net.replace('.0.0/16','.60.0/24')} -p tcp --dport 44818 -j ACCEPT # EtherNet/IP`},
+    {t:'',c:''},
+    {t:'output',c:'# — BLOCK L5 → L3/L2/L1/L0 (No direct Enterprise to OT) —'},
+    {t:'err',c:`iptables -A FORWARD -s ${net.replace('.0.0/16','.10.0/24')} -d ${net.replace('.0.0/16','.40.0/24')} -j DROP  # CRITICAL: Block Enterprise→OT`},
+    {t:'err',c:`iptables -A FORWARD -s ${net.replace('.0.0/16','.10.0/24')} -d ${net.replace('.0.0/16','.50.0/24')} -j DROP`},
+    {t:'err',c:`iptables -A FORWARD -s ${net.replace('.0.0/16','.10.0/24')} -d ${net.replace('.0.0/16','.60.0/24')} -j DROP`},
+    {t:'',c:''},
+    {t:'output',c:'# — LOGGING —'},
+    {t:'cmd',c:'iptables -A FORWARD -j LOG --log-prefix "[ICS-FW-DENY] " --log-level 4'},
+    {t:'',c:''},
+    {t:'ok',c:`[✓] Generated 47 firewall rules for ${arch} architecture`},
+    {t:'ok',c:'[✓] Rules exported to: ./output/ics-firewall-rules.sh'},
+    {t:'ok',c:'[✓] Cisco ASA config exported to: ./output/ics-asa-config.txt'},
+  ];
+  for(const line of lines){
+    await sleep(30+Math.random()*50);
+    const span=document.createElement('div');
+    span.className=line.t;
+    if(line.t==='prompt'){
+      span.innerHTML=`<span class="prompt">${line.c}</span>`;
+      const next=lines[lines.indexOf(line)+1];
+      if(next&&next.t==='cmd')span.innerHTML+=`<span class="cmd">${next.c}</span>`;
+    }else if(line.t!=='cmd'||lines[lines.indexOf(line)-1]?.t!=='prompt'){
+      span.textContent=line.c;
+    }else continue;
+    out.appendChild(span);
+    out.scrollTop=out.scrollHeight;
+  }
+}
+
+async function runScan(){
+  const target=document.getElementById('scanTarget').value||'10.100.50.0/24';
+  const type=document.getElementById('scanType').value;
+  const btn=document.getElementById('scanBtn');
+  const term=document.getElementById('scanTerminal');
+  const out=document.getElementById('scanOutput');
+  btn.disabled=true;btn.textContent='Scanning...';
+  term.style.display='block';out.innerHTML='';
+
+  const hosts=[
+    {ip:target.replace('.0/24','.10'),type:'PLC',vendor:'Siemens S7-1500',os:'VxWorks',ports:[102,443,80]},
+    {ip:target.replace('.0/24','.11'),type:'PLC',vendor:'Allen-Bradley CompactLogix',os:'FW 32.011',ports:[44818,2222,80]},
+    {ip:target.replace('.0/24','.20'),type:'RTU',vendor:'SEL-3555',os:'RTOS',ports:[20000,502,443]},
+    {ip:target.replace('.0/24','.30'),type:'HMI',vendor:'Wonderware InTouch',os:'Windows 10 IoT',ports:[80,443,135,445]},
+    {ip:target.replace('.0/24','.31'),type:'HMI',vendor:'FactoryTalk View SE',os:'Windows Server 2019',ports:[80,443,3389,8080]},
+    {ip:target.replace('.0/24','.40'),type:'SCADA',vendor:'Ignition Gateway',os:'Linux',ports:[8088,8043,502,4840]},
+    {ip:target.replace('.0/24','.50'),type:'Historian',vendor:'OSIsoft PI',os:'Windows Server 2022',ports:[5450,5457,443]},
+    {ip:target.replace('.0/24','.60'),type:'Gateway',vendor:'Moxa MGate 5105',os:'Firmware 4.1',ports:[502,4800,80]},
+  ];
+
+  const vulns=[
+    {host:0,sev:'CRITICAL',desc:'Siemens S7comm unauthenticated read/write access',cve:'CVE-2019-13945',cvss:9.8},
+    {host:1,sev:'HIGH',desc:'EtherNet/IP CIP service allows unauthorized config changes',cve:'CVE-2022-1737',cvss:8.6},
+    {host:2,sev:'HIGH',desc:'DNP3 Secure Authentication not enabled',cve:'N/A',cvss:7.5},
+    {host:3,sev:'CRITICAL',desc:'SMB signing not required — relay attack possible',cve:'CVE-2024-38014',cvss:9.1},
+    {host:3,sev:'HIGH',desc:'Wonderware InTouch default service credentials',cve:'N/A',cvss:8.1},
+    {host:4,sev:'MEDIUM',desc:'RDP enabled without NLA on HMI workstation',cve:'N/A',cvss:6.5},
+    {host:5,sev:'HIGH',desc:'Ignition Gateway exposed Modbus bridge unencrypted',cve:'N/A',cvss:7.8},
+    {host:5,sev:'MEDIUM',desc:'OPC UA Security Mode set to None',cve:'N/A',cvss:6.2},
+    {host:6,sev:'HIGH',desc:'PI Archive unencrypted on network',cve:'CVE-2023-34348',cvss:7.5},
+    {host:7,sev:'CRITICAL',desc:'Moxa MGate default admin credentials (admin/moxa)',cve:'CVE-2023-4204',cvss:9.8},
+  ];
+
+  const lines=[
+    {t:'prompt',c:'$ '},{t:'cmd',c:`ics-vuln-scan --target ${target} --type ${type} --ics-protocols all`},
+    {t:'',c:''},{t:'ok',c:'[+] ICS Vulnerability Scanner v3.0 — AlEnezi Security Framework'},
+    {t:'output',c:`[*] Target: ${target}`},
+    {t:'output',c:`[*] Scan type: ${type}`},
+    {t:'output',c:'[*] ICS protocol detection: Modbus, DNP3, S7comm, EtherNet/IP, OPC UA, BACnet, IEC 61850'},
+    {t:'',c:''},{t:'ok',c:'[+] Phase 1: Host Discovery...'},
+  ];
+
+  for(const h of hosts){
+    lines.push({t:'ok',c:`  [✓] ${h.ip} — ${h.type} (${h.vendor}) [${h.os}]`});
+    lines.push({t:'output',c:`      Open ports: ${h.ports.join(', ')}`});
+  }
+  lines.push({t:'',c:''},{t:'ok',c:`[+] Discovered ${hosts.length} ICS assets`});
+  lines.push({t:'',c:''},{t:'ok',c:'[+] Phase 2: Vulnerability Assessment...'},{t:'',c:''});
+
+  for(const v of vulns){
+    const h=hosts[v.host];
+    const cls=v.sev==='CRITICAL'?'err':v.sev==='HIGH'?'warn':'output';
+    lines.push({t:cls,c:`  [${v.sev}] ${h.ip} (${h.vendor})`});
+    lines.push({t:'output',c:`    └─ ${v.desc}`});
+    lines.push({t:'output',c:`       CVE: ${v.cve} | CVSS: ${v.cvss}`});
+  }
+
+  const crit=vulns.filter(v=>v.sev==='CRITICAL').length;
+  const high=vulns.filter(v=>v.sev==='HIGH').length;
+  const med=vulns.filter(v=>v.sev==='MEDIUM').length;
+  lines.push({t:'',c:''},{t:'warn',c:'═══════════════════════════════════════════════════════════'});
+  lines.push({t:'warn',c:'  SCAN SUMMARY'});
+  lines.push({t:'warn',c:'═══════════════════════════════════════════════════════════'});
+  lines.push({t:'output',c:`  Assets discovered: ${hosts.length}`});
+  lines.push({t:'err',c:`  Critical: ${crit}  |  High: ${high}  |  Medium: ${med}`});
+  lines.push({t:'output',c:`  Total vulnerabilities: ${vulns.length}`});
+  lines.push({t:'',c:''});
+  lines.push({t:'ok',c:'[✓] Report saved to: ./reports/ics-scan-report.html'});
+  lines.push({t:'ok',c:'[✓] JSON export: ./reports/ics-scan-report.json'});
+  lines.push({t:'ok',c:'[✓] Scan completed in 14.3 seconds'});
+
+  for(const line of lines){
+    await sleep(25+Math.random()*45);
+    const span=document.createElement('div');
+    span.className=line.t;
+    if(line.t==='prompt'){
+      const next=lines[lines.indexOf(line)+1];
+      span.innerHTML=`<span class="prompt">${line.c}</span><span class="cmd">${next?next.c:''}</span>`;
+    }else if(line.t==='cmd'&&lines[lines.indexOf(line)-1]?.t==='prompt'){
+      continue;
+    }else{
+      span.textContent=line.c;
+    }
+    out.appendChild(span);
+    out.scrollTop=out.scrollHeight;
+  }
+  btn.disabled=false;btn.textContent='Launch Scan';
+}
+
+// ── TAB NAVIGATION ──────────────────────────────────────────
+document.getElementById('mainNav').addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById('tab-'+e.target.dataset.tab).classList.add('active');
+});
+
+// ── INIT ────────────────────────────────────────────────────
+renderMetrics();
+renderPurdue();
+renderFindings();
+renderTopology();
+renderAssessment();
+renderCompliance();
+renderProtocols();
+</script>
+</body>
+</html>

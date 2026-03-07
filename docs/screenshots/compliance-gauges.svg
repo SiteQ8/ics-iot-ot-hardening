@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 340" fill="none">
+  <rect width="1000" height="340" rx="12" fill="#0a0e17"/>
+  <rect width="1000" height="340" fill="none" rx="12" stroke="#1e2a40"/>
+  <text x="40" y="40" fill="#e8f0fa" font-family="system-ui" font-weight="700" font-size="20">Compliance Dashboard</text>
+  <rect x="257" y="24" width="110" height="20" rx="3" fill="#00f0ff20"/>
+  <text x="312" y="38" fill="#00f0ff" font-family="monospace" font-size="9" text-anchor="middle">MULTI-STANDARD</text>
+
+  <!-- Gauge 1: IEC 62443 - 76% -->
+  <g transform="translate(60,70)">
+    <rect width="160" height="200" rx="10" fill="#0f1520" stroke="#1e2a40"/>
+    <circle cx="80" cy="90" r="52" fill="none" stroke="#1a2236" stroke-width="8"/>
+    <circle cx="80" cy="90" r="52" fill="none" stroke="#ffb347" stroke-width="8" stroke-linecap="round"
+      stroke-dasharray="326.73" stroke-dashoffset="78.41" transform="rotate(-90,80,90)"/>
+    <text x="80" y="97" fill="#e8f0fa" font-family="system-ui" font-weight="700" font-size="22" text-anchor="middle">76%</text>
+    <text x="80" y="175" fill="#5a6e87" font-family="monospace" font-size="9" text-anchor="middle" letter-spacing="0.5">IEC 62443</text>
+    <text x="80" y="190" fill="#ffb347" font-family="monospace" font-size="8" text-anchor="middle">PARTIAL</text>
+  </g>
+
+  <!-- Gauge 2: NIST 800-82 - 82% -->
+  <g transform="translate(250,70)">
+    <rect width="160" height="200" rx="10" fill="#0f1520" stroke="#1e2a40"/>
+    <circle cx="80" cy="90" r="52" fill="none" stroke="#1a2236" stroke-width="8"/>
+    <circle cx="80" cy="90" r="52" fill="none" stroke="#23d160" stroke-width="8" stroke-linecap="round"
+      stroke-dasharray="326.73" stroke-dashoffset="58.81" transform="rotate(-90,80,90)"/>
+    <text x="80" y="97" fill="#e8f0fa" font-family="system-ui" font-weight="700" font-size="22" text-anchor="middle">82%</text>
+    <text x="80" y="175" fill="#5a6e87" font-family="monospace" font-size="9" text-anchor="middle" letter-spacing="0.5">NIST SP 800-82</text>
+    <text x="80" y="190" fill="#23d160" font-family="monospace" font-size="8" text-anchor="middle">COMPLIANT</text>
+  </g>
+
+  <!-- Gauge 3: NERC CIP - 71% -->
+  <g transform="translate(440,70)">
+    <rect width="160" height="200" rx="10" fill="#0f1520" stroke="#1e2a40"/>
+    <circle cx="80" cy="90" r="52" fill="none" stroke="#1a2236" stroke-width="8"/>
+    <circle cx="80" cy="90" r="52" fill="none" stroke="#ffb347" stroke-width="8" stroke-linecap="round"
+      stroke-dasharray="326.73" stroke-dashoffset="94.75" transform="rotate(-90,80,90)"/>
+    <text x="80" y="97" fill="#e8f0fa" font-family="system-ui" font-weight="700" font-size="22" text-anchor="middle">71%</text>
+    <text x="80" y="175" fill="#5a6e87" font-family="monospace" font-size="9" text-anchor="middle" letter-spacing="0.5">NERC CIP</text>
+    <text x="80" y="190" fill="#ffb347" font-family="monospace" font-size="8" text-anchor="middle">PARTIAL</text>
+  </g>
+
+  <!-- Gauge 4: MITRE ATT&CK - 65% -->
+  <g transform="translate(630,70)">
+    <rect width="160" height="200" rx="10" fill="#0f1520" stroke="#1e2a40"/>
+    <circle cx="80" cy="90" r="52" fill="none" stroke="#1a2236" stroke-width="8"/>
+    <circle cx="80" cy="90" r="52" fill="none" stroke="#ff3860" stroke-width="8" stroke-linecap="round"
+      stroke-dasharray="326.73" stroke-dashoffset="114.36" transform="rotate(-90,80,90)"/>
+    <text x="80" y="97" fill="#e8f0fa" font-family="system-ui" font-weight="700" font-size="22" text-anchor="middle">65%</text>
+    <text x="80" y="175" fill="#5a6e87" font-family="monospace" font-size="9" text-anchor="middle" letter-spacing="0.5">MITRE ATT&amp;CK ICS</text>
+    <text x="80" y="190" fill="#ff3860" font-family="monospace" font-size="8" text-anchor="middle">GAPS FOUND</text>
+  </g>
+
+  <!-- Gauge 5: CIS v8 - 79% -->
+  <g transform="translate(820,70)">
+    <rect width="160" height="200" rx="10" fill="#0f1520" stroke="#1e2a40"/>
+    <circle cx="80" cy="90" r="52" fill="none" stroke="#1a2236" stroke-width="8"/>
+    <circle cx="80" cy="90" r="52" fill="none" stroke="#ffb347" stroke-width="8" stroke-linecap="round"
+      stroke-dasharray="326.73" stroke-dashoffset="68.61" transform="rotate(-90,80,90)"/>
+    <text x="80" y="97" fill="#e8f0fa" font-family="system-ui" font-weight="700" font-size="22" text-anchor="middle">79%</text>
+    <text x="80" y="175" fill="#5a6e87" font-family="monospace" font-size="9" text-anchor="middle" letter-spacing="0.5">CIS CONTROLS v8</text>
+    <text x="80" y="190" fill="#ffb347" font-family="monospace" font-size="8" text-anchor="middle">PARTIAL</text>
+  </g>
+
+  <text x="500" y="318" fill="#5a6e87" font-size="10" text-anchor="middle" font-family="system-ui">Multi-standard compliance assessment across 1,247 controls</text>
+</svg>

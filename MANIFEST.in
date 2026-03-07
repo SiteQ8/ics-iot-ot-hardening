@@ -1,0 +1,9 @@
+include LICENSE
+include README.md
+include requirements.txt
+include pyproject.toml
+recursive-include src *.py
+recursive-include templates *
+recursive-include scripts *
+recursive-include docs *.md *.svg
+recursive-include gui *.html
