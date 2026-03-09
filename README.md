@@ -47,6 +47,31 @@
 
 ---
 
+
+## 🔐 Dashboard Access
+
+The interactive dashboard includes a login screen for access control:
+
+| Credential | Username | Password |
+|-----------|----------|----------|
+| **Admin** | `admin` | `ICS@Secure2025` |
+| **Analyst** | `analyst` | `OT@View2025` |
+
+**Live Dashboard:** [https://siteq8.github.io/ics-iot-ot-hardening/gui/](https://siteq8.github.io/ics-iot-ot-hardening/gui/)
+
+### Dashboard Tabs (8)
+
+| Tab | Description |
+|-----|-------------|
+| **Overview** | Security posture metrics, Purdue Model, recent findings, network topology |
+| **Assessment** | Interactive security assessment with scoring across IEC 62443 domains |
+| **Network** | Firewall rule generator for ICS protocols (Modbus, DNP3, IEC 104, etc.) |
+| **Compliance** | Multi-standard compliance gauges (NIST, IEC 62443, NERC CIP, CIS, ISA/IEC) |
+| **Scanner** | ICS vulnerability scanner (demo mode) with CVE detection |
+| **Protocols** | 12 ICS/SCADA protocol security reference with ports and mitigations |
+| **Assets** | ICS asset inventory — 15 demo assets (PLCs, RTUs, HMIs, SIS, VFDs) with vulnerability status |
+| **Incidents** | Security incident timeline — 12 demo incidents with severity classification |
+
 ## 🎯 Why This Framework?
 
 Industrial Control Systems face unique cybersecurity challenges that traditional IT security tools don't address. This framework bridges that gap with purpose-built tools for OT environments:

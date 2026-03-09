@@ -292,10 +292,83 @@ footer a{color:var(--cyan);text-decoration:none}
 [data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:110%;left:50%;transform:translateX(-50%);
   background:var(--bg4);color:var(--text);padding:.35rem .65rem;border-radius:6px;font-size:.75rem;
   white-space:nowrap;z-index:99;border:1px solid var(--border);font-family:var(--font-mono)}
+/* ═══ LOGIN SCREEN ═══ */
+#login-screen{position:fixed;inset:0;background:var(--bg);z-index:10000;display:flex;align-items:center;justify-content:center}
+#login-screen.hidden{display:none}
+.login-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,#00f0ff06 0%,transparent 50%),radial-gradient(ellipse at 70% 80%,#a855f706 0%,transparent 50%)}
+.login-grid{position:absolute;inset:0;background:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:0.12}
+.login-box{position:relative;background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:40px;width:440px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.login-logo{text-align:center;margin-bottom:24px}
+.login-logo h1{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;color:var(--cyan)}
+.login-logo p{font-size:.78rem;color:var(--text-dim);margin-top:4px}
+.login-field{margin-bottom:14px}
+.login-field label{display:block;font-family:var(--font-mono);font-size:.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.login-field input{width:100%;padding:11px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none;transition:border-color .15s}
+.login-field input:focus{border-color:var(--cyan)}
+.login-btn{width:100%;padding:12px;background:var(--cyan);color:#000;border:none;border-radius:8px;font-family:var(--font-mono);font-size:.85rem;font-weight:700;cursor:pointer;transition:background .15s}
+.login-btn:hover{background:#40e0ff}
+.login-error{color:var(--red);font-family:var(--font-mono);font-size:.72rem;text-align:center;margin-top:8px;min-height:16px}
+.login-demo{margin-top:18px;padding:14px;background:var(--bg);border:1px solid var(--border);border-radius:10px}
+.login-demo-t{font-family:var(--font-mono);font-size:.62rem;color:var(--cyan);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.login-demo-r{display:flex;justify-content:space-between;padding:3px 0;font-family:var(--font-mono);font-size:.78rem}
+.login-demo-r span:first-child{color:var(--text-dim)}
+.login-demo-r span:last-child{color:var(--text);cursor:pointer;padding:2px 8px;border-radius:4px;border:1px solid var(--border);transition:all .12s}
+.login-demo-r span:last-child:hover{border-color:var(--cyan);color:var(--cyan)}
+.login-ver{text-align:center;margin-top:14px;font-family:var(--font-mono);font-size:.6rem;color:var(--text-dim)}
+#main-app{display:none}
+#main-app.visible{display:block}
+.user-pill{padding:5px 12px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);font-family:var(--font-mono);font-size:.68rem;color:var(--text-dim);cursor:pointer;margin-right:8px}
+.user-pill:hover{border-color:var(--red);color:var(--red)}
+/* Assets tab */
+.asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:.75rem}
+.asset-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1rem;transition:border-color .12s}
+.asset-card:hover{border-color:var(--cyan)}
+.asset-top{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px}
+.asset-name{font-family:var(--font-heading);font-weight:600;font-size:.9rem}
+.asset-type{font-family:var(--font-mono);font-size:.6rem;padding:2px 8px;border-radius:4px}
+.asset-detail{font-size:.75rem;color:var(--text-dim);line-height:1.7}
+.asset-status{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:4px}
+/* Incidents timeline */
+.timeline{position:relative;padding-right:24px}
+.timeline::before{content:'';position:absolute;right:8px;top:0;bottom:0;width:2px;background:var(--border)}
+.tl-item{position:relative;padding:12px 32px 12px 0;border-bottom:1px solid var(--border)}
+.tl-dot{position:absolute;right:1px;top:18px;width:16px;height:16px;border-radius:50%;border:2px solid var(--border);background:var(--bg)}
+.tl-dot.critical{border-color:var(--red);background:var(--red)}
+.tl-dot.high{border-color:var(--amber);background:var(--amber)}
+.tl-dot.medium{border-color:var(--cyan);background:var(--cyan)}
+.tl-dot.low{border-color:var(--green);background:var(--green)}
+.tl-time{font-family:var(--font-mono);font-size:.65rem;color:var(--text-dim)}
+.tl-title{font-family:var(--font-heading);font-weight:600;font-size:.85rem;margin:2px 0}
+.tl-desc{font-size:.75rem;color:var(--text-dim)}
 </style>
 </head>
 <body>
 <div class="orb2"></div>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+    <div class="login-bg"></div>
+    <div class="login-grid"></div>
+    <div class="login-box">
+        <div class="login-logo">
+            <h1>ICS/IoT/OT Hardening Framework</h1>
+            <p>Industrial Security Operations Center</p>
+        </div>
+        <div class="login-field"><label>Username</label><input type="text" id="login-user" placeholder="Enter username" autocomplete="off"></div>
+        <div class="login-field"><label>Password</label><input type="password" id="login-pass" placeholder="Enter password"></div>
+        <button class="login-btn" onclick="doLogin()">Sign In</button>
+        <div class="login-error" id="login-error"></div>
+        <div class="login-demo">
+            <div class="login-demo-t">Demo Credentials</div>
+            <div class="login-demo-r"><span>Username:</span> <span onclick="document.getElementById('login-user').value='admin';document.getElementById('login-pass').value='ICS@Secure2025'" title="Click to fill">admin</span></div>
+            <div class="login-demo-r"><span>Password:</span> <span onclick="document.getElementById('login-user').value='admin';document.getElementById('login-pass').value='ICS@Secure2025'" title="Click to fill">ICS@Secure2025</span></div>
+            <div style="font-size:.6rem;color:var(--text-dim);margin-top:6px;text-align:center">Click credentials to auto-fill — demo mode uses synthetic data</div>
+        </div>
+        <div class="login-ver">v2.0 — IEC 62443 / NIST 800-82 / NERC CIP / MITRE ATT&CK ICS — @SiteQ8</div>
+    </div>
+</div>
+
+<div id="main-app">
 <div id="app">
 
 <!-- HEADER -->
@@ -316,6 +389,7 @@ footer a{color:var(--cyan);text-decoration:none}
     </div>
   </div>
   <div class="header-actions">
+    <span class="user-pill" onclick="doLogout()">admin [logout]</span>
     <div class="status-badge"><div class="status-dot"></div>Framework Active</div>
     <a href="https://github.com/SiteQ8/ics-iot-ot-hardening" class="gh-btn" target="_blank">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.204.085 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.418-1.305.762-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.605-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/></svg>
@@ -332,6 +406,8 @@ footer a{color:var(--cyan);text-decoration:none}
   <button data-tab="compliance">Compliance</button>
   <button data-tab="scanner">Scanner</button>
   <button data-tab="protocols">Protocols</button>
+  <button data-tab="assets">Assets</button>
+  <button data-tab="incidents">Incidents</button>
 </nav>
 
 <!-- ===================== OVERVIEW TAB ===================== -->
@@ -435,12 +511,37 @@ footer a{color:var(--cyan);text-decoration:none}
   <div class="proto-grid" id="protoGrid"></div>
 </div>
 
-<footer>
-  <strong>ICS/IoT/OT Hardening Framework v2.0</strong> — Built by <a href="https://github.com/SiteQ8" target="_blank">Ali AlEnezi (SiteQ8)</a><br>
-  Aligned with NIST SP 800-82 · IEC 62443 · NERC CIP · MITRE ATT&CK for ICS · CIS Controls<br>
-  <span style="opacity:.5">MIT License · Made in Kuwait 🇰🇼</span>
-</footer>
+<!-- ===================== ASSETS TAB ===================== -->
+<div class="tab-panel" id="tab-assets">
+  <h2 class="section-title">ICS Asset Inventory <span class="tag">47 Assets</span></h2>
+  <div class="metrics" style="margin-bottom:1rem">
+    <div class="metric-card"><div class="metric-value" style="color:var(--cyan)">47</div><div class="metric-label">Total Assets</div><div class="metric-sub">PLCs, RTUs, HMIs, Switches</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--green)">39</div><div class="metric-label">Online</div><div class="metric-sub">83% availability</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--red)">8</div><div class="metric-label">Vulnerable</div><div class="metric-sub">Needs patching</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--amber)">12</div><div class="metric-label">Unpatched</div><div class="metric-sub">Pending maintenance window</div></div>
+  </div>
+  <div class="asset-grid" id="asset-grid"></div>
 </div>
+
+<!-- ===================== INCIDENTS TAB ===================== -->
+<div class="tab-panel" id="tab-incidents">
+  <h2 class="section-title">Security Incidents <span class="tag">Last 30 Days</span></h2>
+  <div class="metrics" style="margin-bottom:1rem">
+    <div class="metric-card"><div class="metric-value" style="color:var(--red)">3</div><div class="metric-label">Critical</div><div class="metric-sub">Immediate response</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--amber)">7</div><div class="metric-label">High</div><div class="metric-sub">Under investigation</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--cyan)">12</div><div class="metric-label">Medium</div><div class="metric-sub">Monitoring</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--green)">19</div><div class="metric-label">Resolved</div><div class="metric-sub">Last 30 days</div></div>
+  </div>
+  <div class="card" style="padding:1.5rem"><div class="timeline" id="incident-timeline"></div></div>
+</div>
+
+<footer>
+  <strong>ICS/IoT/OT Hardening Framework v2.0</strong> — Built by <a href="https://github.com/SiteQ8" target="_blank" style="color:var(--cyan)">Ali AlEnezi (@SiteQ8)</a><br>
+  Aligned with NIST SP 800-82 · IEC 62443 · NERC CIP · MITRE ATT&CK for ICS · CIS Controls<br>
+  <span style="opacity:.5">MIT License · Made in Kuwait</span>
+</footer>
+</div><!-- /app -->
+</div><!-- /main-app -->
 
 <script>
 // ── DATA ────────────────────────────────────────────────────
@@ -905,6 +1006,80 @@ async function runScan(){
   btn.disabled=false;btn.textContent='Launch Scan';
 }
 
+// ── LOGIN ────────────────────────────────────────────────────
+function doLogin(){
+  const u=document.getElementById('login-user').value,p=document.getElementById('login-pass').value;
+  if(u==='admin'&&p==='ICS@Secure2025'){
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('main-app').classList.add('visible');
+    initApp();
+  }else if(u==='analyst'&&p==='OT@View2025'){
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('main-app').classList.add('visible');
+    initApp();
+  }else{document.getElementById('login-error').textContent=u||p?'Invalid credentials. Use demo account below.':'Enter username and password.'}
+}
+function doLogout(){document.getElementById('login-screen').classList.remove('hidden');document.getElementById('main-app').classList.remove('visible');document.getElementById('login-user').value='';document.getElementById('login-pass').value='';document.getElementById('login-error').textContent=''}
+document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+document.getElementById('login-user').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-pass').focus()});
+
+// ── ASSETS DATA ─────────────────────────────────────────────
+const ASSETS=[
+{id:'PLC-001',name:'Main Process Controller',type:'PLC',vendor:'Siemens S7-1500',purdue:'L1',proto:'S7comm+',ip:'10.10.1.10',status:'online',vuln:false,fw:'V2.9.7'},
+{id:'PLC-002',name:'Water Treatment PLC',type:'PLC',vendor:'Allen-Bradley',purdue:'L1',proto:'EtherNet/IP',ip:'10.10.1.11',status:'online',vuln:true,fw:'V33.011'},
+{id:'PLC-003',name:'Gas Compressor Controller',type:'PLC',vendor:'Schneider M580',purdue:'L1',proto:'Modbus/TCP',ip:'10.10.1.12',status:'online',vuln:false,fw:'V4.10'},
+{id:'RTU-001',name:'Remote Terminal Unit A',type:'RTU',vendor:'GE D400',purdue:'L1',proto:'DNP3',ip:'10.10.2.20',status:'online',vuln:false,fw:'V8.1'},
+{id:'RTU-002',name:'Substation RTU',type:'RTU',vendor:'ABB RTU560',purdue:'L1',proto:'IEC 104',ip:'10.10.2.21',status:'offline',vuln:false,fw:'V12.3'},
+{id:'HMI-001',name:'Operator Station 1',type:'HMI',vendor:'Wonderware',purdue:'L2',proto:'OPC UA',ip:'10.10.3.30',status:'online',vuln:true,fw:'2023 R1'},
+{id:'HMI-002',name:'Operator Station 2',type:'HMI',vendor:'Ignition',purdue:'L2',proto:'OPC UA',ip:'10.10.3.31',status:'online',vuln:false,fw:'8.1.33'},
+{id:'EWS-001',name:'Engineering Workstation',type:'EWS',vendor:'Siemens TIA Portal',purdue:'L3',proto:'S7comm+',ip:'10.10.4.40',status:'online',vuln:true,fw:'V18'},
+{id:'SRV-001',name:'SCADA Server',type:'Server',vendor:'AVEVA',purdue:'L3',proto:'Modbus/TCP',ip:'10.10.4.41',status:'online',vuln:true,fw:'2023.1'},
+{id:'SRV-002',name:'Historian Server',type:'Server',vendor:'OSIsoft PI',purdue:'L3.5',proto:'OPC UA',ip:'10.10.5.50',status:'online',vuln:false,fw:'2023 SP1'},
+{id:'FW-001',name:'OT Firewall',type:'Firewall',vendor:'Palo Alto PA-3260',purdue:'L3.5',proto:'—',ip:'10.10.5.1',status:'online',vuln:false,fw:'11.1.2'},
+{id:'SW-001',name:'Industrial Switch',type:'Switch',vendor:'Hirschmann RS20',purdue:'L2',proto:'—',ip:'10.10.3.1',status:'online',vuln:true,fw:'9.4.2'},
+{id:'BMS-001',name:'Building Management',type:'BMS',vendor:'Johnson Controls',purdue:'L2',proto:'BACnet/IP',ip:'10.10.6.60',status:'online',vuln:true,fw:'V4.3'},
+{id:'SIS-001',name:'Safety Instrumented System',type:'SIS',vendor:'Triconex 3008',purdue:'L1',proto:'TriStation',ip:'10.10.1.100',status:'online',vuln:false,fw:'V10.6'},
+{id:'VFD-001',name:'Variable Frequency Drive',type:'VFD',vendor:'ABB ACS880',purdue:'L0',proto:'Modbus RTU',ip:'—',status:'online',vuln:false,fw:'V2.60'},
+];
+
+function renderAssets(){
+  const grid=document.getElementById('asset-grid');
+  grid.innerHTML=ASSETS.map(a=>{
+    const sc=a.status==='online'?'var(--green)':'var(--text-dim)';
+    const vc=a.vuln?'background:var(--red-dim);color:var(--red);border:1px solid var(--red)':'background:var(--green-dim);color:var(--green);border:1px solid var(--green)';
+    return `<div class="asset-card">
+      <div class="asset-top"><div class="asset-name"><span class="asset-status" style="background:${sc}"></span> ${a.name}</div><span class="asset-type" style="${vc}">${a.vuln?'VULNERABLE':'SECURE'}</span></div>
+      <div class="asset-detail">
+        <strong>ID:</strong> ${a.id} · <strong>Type:</strong> ${a.type} · <strong>Purdue:</strong> ${a.purdue}<br>
+        <strong>Vendor:</strong> ${a.vendor} · <strong>FW:</strong> ${a.fw}<br>
+        <strong>Protocol:</strong> ${a.proto} · <strong>IP:</strong> ${a.ip}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── INCIDENTS DATA ──────────────────────────────────────────
+const INCIDENTS=[
+{time:'2026-03-09 14:23',sev:'critical',title:'Unauthorized Modbus Write to PLC-002',desc:'Function code 0x06 (Write Single Register) detected from unauthorized IP 10.10.8.99. Source not in engineering whitelist. Connection blocked by IDS rule.'},
+{time:'2026-03-08 09:15',sev:'critical',title:'S7comm Authentication Bypass Attempt',desc:'Multiple authentication failures on PLC-001 (10.10.1.10) from EWS-001. Possible credential brute-force. Account locked after 5 attempts.'},
+{time:'2026-03-07 22:41',sev:'high',title:'SMBv1 Traffic Detected on OT Network',desc:'SMBv1 communication between HMI-001 and SRV-001. Legacy protocol should be disabled per hardening policy.'},
+{time:'2026-03-07 11:02',sev:'high',title:'Port Scan from IT Network to OT Segment',desc:'SYN scan on ports 502, 2404, 44818, 47808 from IT address 192.168.1.50 targeting OT subnet 10.10.1.0/24.'},
+{time:'2026-03-06 16:30',sev:'medium',title:'BACnet/IP Discovery Broadcast',desc:'Who-Is broadcast on BMS subnet from unknown device. Could indicate rogue device or misconfiguration.'},
+{time:'2026-03-06 08:12',sev:'high',title:'Firmware Upload Attempt on SW-001',desc:'TFTP firmware upload initiated to Hirschmann switch without change management approval.'},
+{time:'2026-03-05 20:45',sev:'critical',title:'DNP3 Unsolicited Response Storm',desc:'RTU-001 sending excessive unsolicited responses. Possible DoS or device malfunction.'},
+{time:'2026-03-05 13:22',sev:'medium',title:'Expired TLS Certificate on Historian Server',desc:'SRV-002 OPC UA endpoint using expired certificate. Clients may reject connections.'},
+{time:'2026-03-04 07:30',sev:'high',title:'Unauthorized VPN Connection to OT Jump Host',desc:'VPN session from unrecognized external IP to OT jump host. MFA not enforced.'},
+{time:'2026-03-03 15:18',sev:'medium',title:'NTP Drift Exceeds 500ms on PLC Network',desc:'Time synchronization drift between PLCs and SCADA server may affect sequence-of-events logging.'},
+{time:'2026-03-02 10:00',sev:'low',title:'Scheduled Vulnerability Scan Completed',desc:'Monthly vulnerability scan of OT assets completed. 8 vulnerabilities identified, 3 critical.'},
+{time:'2026-03-01 09:00',sev:'low',title:'Firewall Rule Review Completed',desc:'Quarterly firewall rule review for FW-001 completed. 4 stale rules removed.'},
+];
+
+function renderIncidents(){
+  document.getElementById('incident-timeline').innerHTML=INCIDENTS.map(inc=>
+    `<div class="tl-item"><div class="tl-dot ${inc.sev}"></div><div class="tl-time">${inc.time}</div><div class="tl-title">${inc.title}</div><div class="tl-desc">${inc.desc}</div></div>`
+  ).join('');
+}
+
 // ── TAB NAVIGATION ──────────────────────────────────────────
 document.getElementById('mainNav').addEventListener('click',e=>{
   if(e.target.tagName!=='BUTTON')return;
@@ -915,13 +1090,17 @@ document.getElementById('mainNav').addEventListener('click',e=>{
 });
 
 // ── INIT ────────────────────────────────────────────────────
-renderMetrics();
-renderPurdue();
-renderFindings();
-renderTopology();
-renderAssessment();
-renderCompliance();
-renderProtocols();
+function initApp(){
+  renderMetrics();
+  renderPurdue();
+  renderFindings();
+  renderTopology();
+  renderAssessment();
+  renderCompliance();
+  renderProtocols();
+  renderAssets();
+  renderIncidents();
+}
 </script>
 </body>
 </html>
