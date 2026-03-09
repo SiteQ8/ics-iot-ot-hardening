@@ -295,9 +295,9 @@ footer a{color:var(--cyan);text-decoration:none}
 /* ═══ LOGIN SCREEN ═══ */
 #login-screen{position:fixed;inset:0;background:var(--bg);z-index:10000;display:flex;align-items:center;justify-content:center}
 #login-screen.hidden{display:none}
-.login-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,#00f0ff06 0%,transparent 50%),radial-gradient(ellipse at 70% 80%,#a855f706 0%,transparent 50%)}
-.login-grid{position:absolute;inset:0;background:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:0.12}
-.login-box{position:relative;background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:40px;width:440px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.login-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,#00f0ff06 0%,transparent 50%),radial-gradient(ellipse at 70% 80%,#a855f706 0%,transparent 50%);pointer-events:none}
+.login-grid{position:absolute;inset:0;background:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:0.12;pointer-events:none}
+.login-box{position:relative;z-index:1;background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:40px;width:440px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,.5)}
 .login-logo{text-align:center;margin-bottom:24px}
 .login-logo h1{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;color:var(--cyan)}
 .login-logo p{font-size:.78rem;color:var(--text-dim);margin-top:4px}
