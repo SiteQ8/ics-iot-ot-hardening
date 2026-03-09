@@ -59,7 +59,7 @@ The interactive dashboard includes a login screen for access control:
 
 **Live Dashboard:** [https://siteq8.github.io/ics-iot-ot-hardening/gui/](https://siteq8.github.io/ics-iot-ot-hardening/gui/)
 
-### Dashboard Tabs (8)
+### Dashboard Tabs (11)
 
 | Tab | Description |
 |-----|-------------|
@@ -71,6 +71,9 @@ The interactive dashboard includes a login screen for access control:
 | **Protocols** | 12 ICS/SCADA protocol security reference with ports and mitigations |
 | **Assets** | ICS asset inventory — 15 demo assets (PLCs, RTUs, HMIs, SIS, VFDs) with vulnerability status |
 | **Incidents** | Security incident timeline — 12 demo incidents with severity classification |
+| **Discovery** | Active ICS asset discovery scanner — scan by IP range or protocol (Modbus, DNP3, S7, OPC UA, MQTT, SNMP, etc.). 20 demo devices with CVE references, animated scan log |
+| **SNMP** | SNMP network monitor — query devices with SNMPv1/v2c/v3, view CPU/memory/temperature/uptime, interface table, 6-point security assessment |
+| **Settings** | Scan configuration, SNMP settings (auth/privacy protocols), alert thresholds, compliance standard selection, syslog/SIEM integration |
 
 ## 🎯 Why This Framework?
 
