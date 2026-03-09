@@ -408,6 +408,9 @@ footer a{color:var(--cyan);text-decoration:none}
   <button data-tab="protocols">Protocols</button>
   <button data-tab="assets">Assets</button>
   <button data-tab="incidents">Incidents</button>
+  <button data-tab="discovery">Discovery</button>
+  <button data-tab="snmp">SNMP</button>
+  <button data-tab="settings">Settings</button>
 </nav>
 
 <!-- ===================== OVERVIEW TAB ===================== -->
@@ -533,6 +536,138 @@ footer a{color:var(--cyan);text-decoration:none}
     <div class="metric-card"><div class="metric-value" style="color:var(--green)">19</div><div class="metric-label">Resolved</div><div class="metric-sub">Last 30 days</div></div>
   </div>
   <div class="card" style="padding:1.5rem"><div class="timeline" id="incident-timeline"></div></div>
+</div>
+
+<!-- ===================== DISCOVERY TAB ===================== -->
+<div class="tab-panel" id="tab-discovery">
+  <h2 class="section-title">ICS Asset Discovery Scanner <span class="tag">Active Scan</span></h2>
+  <div class="card" style="padding:1.5rem;margin-bottom:1rem">
+    <h3 style="font-family:var(--font-heading);font-size:1rem;margin-bottom:1rem;color:var(--cyan)">Scan Configuration</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+      <div>
+        <label style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);display:block;margin-bottom:4px">Target IP / Range</label>
+        <input id="disc-ip" type="text" value="10.10.0.0/16" style="width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none">
+      </div>
+      <div>
+        <label style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);display:block;margin-bottom:4px">Protocol Filter</label>
+        <select id="disc-proto" style="width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none;appearance:none">
+          <option value="all">All ICS Protocols</option>
+          <option value="modbus">Modbus/TCP (502)</option>
+          <option value="dnp3">DNP3 (20000)</option>
+          <option value="s7">S7comm (102)</option>
+          <option value="enetip">EtherNet/IP (44818)</option>
+          <option value="opcua">OPC UA (4840)</option>
+          <option value="bacnet">BACnet/IP (47808)</option>
+          <option value="iec104">IEC 104 (2404)</option>
+          <option value="mqtt">MQTT (1883)</option>
+          <option value="coap">CoAP (5683)</option>
+          <option value="snmp">SNMP (161)</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
+      <label style="display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text-dim);cursor:pointer"><input type="checkbox" id="disc-snmp" checked style="accent-color:var(--cyan)"> SNMP Enumeration</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text-dim);cursor:pointer"><input type="checkbox" id="disc-banner" checked style="accent-color:var(--cyan)"> Banner Grabbing</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text-dim);cursor:pointer"><input type="checkbox" id="disc-vuln" checked style="accent-color:var(--cyan)"> Vulnerability Check</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text-dim);cursor:pointer"><input type="checkbox" id="disc-fw" style="accent-color:var(--cyan)"> Firmware Version</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text-dim);cursor:pointer"><input type="checkbox" id="disc-purdue" checked style="accent-color:var(--cyan)"> Purdue Classification</label>
+    </div>
+    <button class="scan-btn" id="disc-btn" onclick="runDiscovery()" style="padding:10px 28px;background:var(--cyan);color:#000;border:none;border-radius:8px;font-family:var(--font-mono);font-weight:700;cursor:pointer;font-size:.85rem">Launch Discovery Scan</button>
+    <span id="disc-status" style="margin-right:12px;font-family:var(--font-mono);font-size:.75rem;color:var(--text-dim)"></span>
+  </div>
+  <div class="card" style="padding:1.5rem;display:none" id="disc-results">
+    <h3 style="font-family:var(--font-heading);font-size:1rem;margin-bottom:1rem;color:var(--cyan)">Discovered Assets</h3>
+    <div id="disc-log" style="font-family:var(--font-mono);font-size:.72rem;line-height:1.8;color:var(--text-dim);max-height:200px;overflow-y:auto;margin-bottom:1rem;background:var(--bg);padding:12px;border-radius:8px"></div>
+    <div class="asset-grid" id="disc-assets"></div>
+  </div>
+</div>
+
+<!-- ===================== SNMP TAB ===================== -->
+<div class="tab-panel" id="tab-snmp">
+  <h2 class="section-title">SNMP Network Monitor <span class="tag">Real-time</span></h2>
+  <div class="card" style="padding:1.5rem;margin-bottom:1rem">
+    <h3 style="font-family:var(--font-heading);font-size:1rem;margin-bottom:1rem;color:var(--cyan)">SNMP Query</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem">
+      <div>
+        <label style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);display:block;margin-bottom:4px">Target IP</label>
+        <input id="snmp-ip" type="text" value="10.10.1.10" style="width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none">
+      </div>
+      <div>
+        <label style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);display:block;margin-bottom:4px">Community / Credentials</label>
+        <input id="snmp-community" type="text" value="public" style="width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none">
+      </div>
+      <div>
+        <label style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);display:block;margin-bottom:4px">SNMP Version</label>
+        <select id="snmp-ver" style="width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none;appearance:none">
+          <option value="v2c">SNMPv2c</option>
+          <option value="v3">SNMPv3 (Recommended)</option>
+          <option value="v1">SNMPv1 (Insecure)</option>
+        </select>
+      </div>
+    </div>
+    <button onclick="runSNMP()" style="padding:10px 28px;background:var(--cyan);color:#000;border:none;border-radius:8px;font-family:var(--font-mono);font-weight:700;cursor:pointer;font-size:.85rem">Query Device</button>
+  </div>
+  <div class="metrics" style="margin-bottom:1rem" id="snmp-metrics"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="card" style="padding:1.5rem">
+      <h3 style="font-family:var(--font-heading);font-size:.9rem;margin-bottom:1rem;color:var(--cyan)">System Information</h3>
+      <div id="snmp-sysinfo" style="font-family:var(--font-mono);font-size:.78rem;line-height:2;color:var(--text-dim)">Run SNMP query to view device information</div>
+    </div>
+    <div class="card" style="padding:1.5rem">
+      <h3 style="font-family:var(--font-heading);font-size:.9rem;margin-bottom:1rem;color:var(--cyan)">Interface Table</h3>
+      <div id="snmp-interfaces" style="font-family:var(--font-mono);font-size:.72rem;line-height:1.8;color:var(--text-dim);max-height:300px;overflow-y:auto">Run SNMP query to view interfaces</div>
+    </div>
+  </div>
+  <div class="card" style="padding:1.5rem;margin-top:1rem">
+    <h3 style="font-family:var(--font-heading);font-size:.9rem;margin-bottom:1rem;color:var(--cyan)">SNMP Security Assessment</h3>
+    <div id="snmp-security"></div>
+  </div>
+</div>
+
+<!-- ===================== SETTINGS TAB ===================== -->
+<div class="tab-panel" id="tab-settings">
+  <h2 class="section-title">Settings <span class="tag">Configuration</span></h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="card" style="padding:1.5rem">
+      <h3 style="font-family:var(--font-heading);font-size:1rem;margin-bottom:1rem;color:var(--cyan)">Scan Configuration</h3>
+      <div style="margin-bottom:12px"><label style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);display:block;margin-bottom:4px">Default Scan Timeout (seconds)</label><input type="number" value="10" style="width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none"></div>
+      <div style="margin-bottom:12px"><label style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);display:block;margin-bottom:4px">Max Concurrent Threads</label><input type="number" value="10" style="width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none"></div>
+      <div style="margin-bottom:12px"><label style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);display:block;margin-bottom:4px">OT Network CIDR Range</label><input type="text" value="10.10.0.0/16" style="width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none"></div>
+      <div><label style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer;padding:6px 0"><input type="checkbox" checked style="accent-color:var(--cyan)"> Enable passive discovery mode</label></div>
+      <div><label style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer;padding:6px 0"><input type="checkbox" checked style="accent-color:var(--cyan)"> Auto-classify Purdue level</label></div>
+      <div><label style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer;padding:6px 0"><input type="checkbox" style="accent-color:var(--cyan)"> Enable active probing (caution)</label></div>
+    </div>
+    <div class="card" style="padding:1.5rem">
+      <h3 style="font-family:var(--font-heading);font-size:1rem;margin-bottom:1rem;color:var(--cyan)">SNMP Configuration</h3>
+      <div style="margin-bottom:12px"><label style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);display:block;margin-bottom:4px">Default SNMP Version</label>
+        <select style="width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none;appearance:none"><option>SNMPv3 (Recommended)</option><option>SNMPv2c</option></select></div>
+      <div style="margin-bottom:12px"><label style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);display:block;margin-bottom:4px">SNMPv3 Auth Protocol</label>
+        <select style="width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none;appearance:none"><option>SHA-256</option><option>SHA-1</option><option>MD5 (Insecure)</option></select></div>
+      <div style="margin-bottom:12px"><label style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);display:block;margin-bottom:4px">SNMPv3 Privacy Protocol</label>
+        <select style="width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none;appearance:none"><option>AES-256</option><option>AES-128</option><option>DES (Insecure)</option></select></div>
+      <div><label style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer;padding:6px 0"><input type="checkbox" checked style="accent-color:var(--cyan)"> Flag SNMPv1/v2c as security risk</label></div>
+      <div><label style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer;padding:6px 0"><input type="checkbox" checked style="accent-color:var(--cyan)"> Detect default community strings</label></div>
+    </div>
+    <div class="card" style="padding:1.5rem">
+      <h3 style="font-family:var(--font-heading);font-size:1rem;margin-bottom:1rem;color:var(--cyan)">Alert Thresholds</h3>
+      <div style="margin-bottom:12px"><label style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);display:block;margin-bottom:4px">CPU Usage Alert (%)</label><input type="number" value="85" style="width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none"></div>
+      <div style="margin-bottom:12px"><label style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);display:block;margin-bottom:4px">Memory Usage Alert (%)</label><input type="number" value="90" style="width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none"></div>
+      <div style="margin-bottom:12px"><label style="font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);display:block;margin-bottom:4px">Interface Error Rate Alert (%)</label><input type="number" value="1" style="width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:.85rem;outline:none"></div>
+      <div><label style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer;padding:6px 0"><input type="checkbox" checked style="accent-color:var(--cyan)"> Email alerts for critical incidents</label></div>
+      <div><label style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer;padding:6px 0"><input type="checkbox" checked style="accent-color:var(--cyan)"> Syslog forwarding (SIEM integration)</label></div>
+    </div>
+    <div class="card" style="padding:1.5rem">
+      <h3 style="font-family:var(--font-heading);font-size:1rem;margin-bottom:1rem;color:var(--cyan)">Compliance Standards</h3>
+      <div><label style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer;padding:6px 0"><input type="checkbox" checked style="accent-color:var(--cyan)"> IEC 62443 — Industrial Automation</label></div>
+      <div><label style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer;padding:6px 0"><input type="checkbox" checked style="accent-color:var(--cyan)"> NIST SP 800-82 — ICS Security Guide</label></div>
+      <div><label style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer;padding:6px 0"><input type="checkbox" checked style="accent-color:var(--cyan)"> NERC CIP — Critical Infrastructure</label></div>
+      <div><label style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer;padding:6px 0"><input type="checkbox" checked style="accent-color:var(--cyan)"> MITRE ATT&CK for ICS</label></div>
+      <div><label style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer;padding:6px 0"><input type="checkbox" checked style="accent-color:var(--cyan)"> CIS Controls v8.1</label></div>
+      <div><label style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer;padding:6px 0"><input type="checkbox" style="accent-color:var(--cyan)"> ISA/IEC 62443 — SL Assessment</label></div>
+      <div><label style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text);cursor:pointer;padding:6px 0"><input type="checkbox" style="accent-color:var(--cyan)"> IEC 61850 — Substation Automation</label></div>
+      <div style="margin-top:12px"><button onclick="alert('Settings saved successfully')" style="padding:10px 24px;background:var(--cyan);color:#000;border:none;border-radius:8px;font-family:var(--font-mono);font-weight:700;cursor:pointer;font-size:.82rem">Save Settings</button></div>
+    </div>
+  </div>
 </div>
 
 <footer>
@@ -1078,6 +1213,132 @@ function renderIncidents(){
   document.getElementById('incident-timeline').innerHTML=INCIDENTS.map(inc=>
     `<div class="tl-item"><div class="tl-dot ${inc.sev}"></div><div class="tl-time">${inc.time}</div><div class="tl-title">${inc.title}</div><div class="tl-desc">${inc.desc}</div></div>`
   ).join('');
+}
+
+// ── DISCOVERY SCANNER ────────────────────────────────────────
+const DISC_DB=[
+{ip:'10.10.1.10',name:'Siemens S7-1500',type:'PLC',proto:'S7comm',port:102,purdue:'L1',vendor:'Siemens',fw:'V2.9.7',vuln:['CVE-2023-28489'],status:'online'},
+{ip:'10.10.1.11',name:'Allen-Bradley CompactLogix',type:'PLC',proto:'EtherNet/IP',port:44818,purdue:'L1',vendor:'Rockwell',fw:'V33.011',vuln:['CVE-2022-1159'],status:'online'},
+{ip:'10.10.1.12',name:'Schneider M580',type:'PLC',proto:'Modbus/TCP',port:502,purdue:'L1',vendor:'Schneider',fw:'V4.10',vuln:[],status:'online'},
+{ip:'10.10.1.100',name:'Triconex 3008',type:'SIS',proto:'TriStation',port:1502,purdue:'L1',vendor:'Schneider',fw:'V10.6',vuln:[],status:'online'},
+{ip:'10.10.2.20',name:'GE D400 RTU',type:'RTU',proto:'DNP3',port:20000,purdue:'L1',vendor:'GE',fw:'V8.1',vuln:[],status:'online'},
+{ip:'10.10.2.21',name:'ABB RTU560',type:'RTU',proto:'IEC 104',port:2404,purdue:'L1',vendor:'ABB',fw:'V12.3',vuln:['CVE-2022-29862'],status:'offline'},
+{ip:'10.10.3.30',name:'Wonderware InTouch',type:'HMI',proto:'OPC UA',port:4840,purdue:'L2',vendor:'AVEVA',fw:'2023 R1',vuln:['CVE-2023-1256'],status:'online'},
+{ip:'10.10.3.31',name:'Ignition Gateway',type:'HMI',proto:'OPC UA',port:4840,purdue:'L2',vendor:'Inductive',fw:'8.1.33',vuln:[],status:'online'},
+{ip:'10.10.3.1',name:'Hirschmann RS20',type:'Switch',proto:'SNMP',port:161,purdue:'L2',vendor:'Hirschmann',fw:'9.4.2',vuln:['CVE-2021-33541'],status:'online'},
+{ip:'10.10.4.40',name:'TIA Portal EWS',type:'EWS',proto:'S7comm',port:102,purdue:'L3',vendor:'Siemens',fw:'V18',vuln:[],status:'online'},
+{ip:'10.10.4.41',name:'AVEVA SCADA Server',type:'Server',proto:'Modbus/TCP',port:502,purdue:'L3',vendor:'AVEVA',fw:'2023.1',vuln:['CVE-2023-34360'],status:'online'},
+{ip:'10.10.5.50',name:'OSIsoft PI Server',type:'Historian',proto:'OPC UA',port:4840,purdue:'L3.5',vendor:'OSIsoft',fw:'2023 SP1',vuln:[],status:'online'},
+{ip:'10.10.5.1',name:'Palo Alto PA-3260',type:'Firewall',proto:'—',port:443,purdue:'L3.5',vendor:'Palo Alto',fw:'11.1.2',vuln:[],status:'online'},
+{ip:'10.10.6.60',name:'JCI BMS Controller',type:'BMS',proto:'BACnet/IP',port:47808,purdue:'L2',vendor:'Johnson Controls',fw:'V4.3',vuln:['CVE-2023-0955'],status:'online'},
+{ip:'10.10.7.70',name:'ABB ACS880 VFD',type:'VFD',proto:'Modbus RTU',port:502,purdue:'L0',vendor:'ABB',fw:'V2.60',vuln:[],status:'online'},
+{ip:'10.10.1.200',name:'Yokogawa CENTUM VP',type:'DCS',proto:'OPC UA',port:4840,purdue:'L1',vendor:'Yokogawa',fw:'R6.09',vuln:[],status:'online'},
+{ip:'10.10.3.50',name:'Moxa EDS-516A',type:'Switch',proto:'SNMP',port:161,purdue:'L2',vendor:'Moxa',fw:'V3.10',vuln:['CVE-2022-38152'],status:'online'},
+{ip:'10.10.8.10',name:'Cisco IE-4010',type:'Router',proto:'SNMP',port:161,purdue:'L3.5',vendor:'Cisco',fw:'17.9.4',vuln:[],status:'online'},
+{ip:'10.10.1.50',name:'Emerson DeltaV',type:'DCS',proto:'OPC UA',port:4840,purdue:'L1',vendor:'Emerson',fw:'V14.3',vuln:[],status:'online'},
+{ip:'10.10.9.10',name:'MQTT Broker',type:'Broker',proto:'MQTT',port:1883,purdue:'L3',vendor:'Eclipse Mosquitto',fw:'V2.0.18',vuln:['CVE-2023-28366'],status:'online'},
+];
+
+async function runDiscovery(){
+  const btn=document.getElementById('disc-btn');
+  const status=document.getElementById('disc-status');
+  const results=document.getElementById('disc-results');
+  const log=document.getElementById('disc-log');
+  const grid=document.getElementById('disc-assets');
+  const proto=document.getElementById('disc-proto').value;
+  const ipRange=document.getElementById('disc-ip').value;
+
+  btn.disabled=true;btn.textContent='Scanning...';
+  results.style.display='block';log.innerHTML='';grid.innerHTML='';
+
+  const filtered=proto==='all'?DISC_DB:DISC_DB.filter(d=>d.proto.toLowerCase().includes(proto)||d.port===parseInt(proto));
+  let found=0;
+
+  for(let i=0;i<filtered.length;i++){
+    const d=filtered[i];
+    await new Promise(r=>setTimeout(r,150+Math.random()*200));
+    found++;
+    const color=d.vuln.length>0?'var(--red)':d.status==='offline'?'var(--text-dim)':'var(--green)';
+    log.innerHTML+=`<span style="color:${color}">[${new Date().toLocaleTimeString()}]</span> Found: ${d.ip} — ${d.name} (${d.proto}:${d.port}) [${d.purdue}]${d.vuln.length?` <span style="color:var(--red)">⚠ ${d.vuln.length} CVE(s)</span>`:' ✓'}\n`;
+    log.scrollTop=log.scrollHeight;
+    status.textContent=`${found} devices found...`;
+
+    const vc=d.vuln.length>0?'background:var(--red-dim);color:var(--red);border:1px solid var(--red)':'background:var(--green-dim);color:var(--green);border:1px solid var(--green)';
+    grid.innerHTML+=`<div class="asset-card">
+      <div class="asset-top"><div class="asset-name"><span class="asset-status" style="background:${d.status==='online'?'var(--green)':'var(--text-dim)'}"></span> ${d.name}</div><span class="asset-type" style="${vc}">${d.vuln.length?d.vuln.length+' CVE':'SECURE'}</span></div>
+      <div class="asset-detail">
+        <strong>IP:</strong> ${d.ip} · <strong>Type:</strong> ${d.type} · <strong>Purdue:</strong> ${d.purdue}<br>
+        <strong>Vendor:</strong> ${d.vendor} · <strong>FW:</strong> ${d.fw}<br>
+        <strong>Protocol:</strong> ${d.proto}:${d.port}${d.vuln.length?' · <strong style="color:var(--red)">CVEs:</strong> '+d.vuln.join(', '):''}
+      </div></div>`;
+  }
+
+  status.textContent=`Scan complete — ${found} devices discovered`;
+  log.innerHTML+=`\n<span style="color:var(--cyan)">[DONE]</span> Discovery scan completed. ${found} ICS assets found in ${ipRange}. Vulnerable: ${filtered.filter(d=>d.vuln.length).length}.\n`;
+  btn.disabled=false;btn.textContent='Launch Discovery Scan';
+}
+
+// ── SNMP MONITOR ─────────────────────────────────────────────
+function runSNMP(){
+  const ip=document.getElementById('snmp-ip').value;
+  const ver=document.getElementById('snmp-ver').value;
+  const community=document.getElementById('snmp-community').value;
+
+  // Simulated SNMP data
+  const devices={
+    '10.10.1.10':{sys:'Siemens SIMATIC S7-1500',desc:'S7-1500 CPU 1515-2 PN/DP, FW V2.9.7',contact:'ot-admin@company.kw',location:'Plant A — Zone 1',uptime:'47d 12h 33m',cpu:23,mem:41,temp:52,
+      ifaces:[{name:'PROFINET',status:'up',speed:'100 Mbps',in:'1.2 GB',out:'890 MB',errors:0},{name:'X1 P1',status:'up',speed:'1 Gbps',in:'45 GB',out:'12 GB',errors:2},{name:'X1 P2',status:'down',speed:'—',in:'0',out:'0',errors:0}]},
+    '10.10.3.1':{sys:'Hirschmann RS20',desc:'Rail Switch RS20-0800T1T1SDAEHH09.0',contact:'net-admin@company.kw',location:'Plant A — Zone 2',uptime:'182d 5h 17m',cpu:12,mem:38,temp:44,
+      ifaces:[{name:'Port 1',status:'up',speed:'100 Mbps',in:'23 GB',out:'21 GB',errors:0},{name:'Port 2',status:'up',speed:'100 Mbps',in:'18 GB',out:'15 GB',errors:1},{name:'Port 3',status:'up',speed:'1 Gbps',in:'120 GB',out:'95 GB',errors:0},{name:'Port 4-8',status:'down',speed:'—',in:'0',out:'0',errors:0}]},
+  };
+
+  const d=devices[ip]||{sys:'Unknown Device ('+ip+')',desc:'SNMP agent responding',contact:'—',location:'—',uptime:Math.floor(Math.random()*200)+'d '+Math.floor(Math.random()*24)+'h',cpu:Math.floor(Math.random()*60+10),mem:Math.floor(Math.random()*50+20),temp:Math.floor(Math.random()*30+35),
+    ifaces:[{name:'eth0',status:'up',speed:'1 Gbps',in:Math.floor(Math.random()*100)+' GB',out:Math.floor(Math.random()*50)+' GB',errors:Math.floor(Math.random()*5)}]};
+
+  // Metrics
+  const cpuC=d.cpu>80?'red':d.cpu>50?'amber':'green';
+  const memC=d.mem>80?'red':d.mem>50?'amber':'green';
+  const tmpC=d.temp>70?'red':d.temp>50?'amber':'green';
+  document.getElementById('snmp-metrics').innerHTML=`
+    <div class="metric-card"><div class="metric-value" style="color:var(--${cpuC})">${d.cpu}%</div><div class="metric-label">CPU Usage</div><div class="metric-sub">hrProcessorLoad</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--${memC})">${d.mem}%</div><div class="metric-label">Memory Usage</div><div class="metric-sub">hrStorageUsed</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--${tmpC})">${d.temp}°C</div><div class="metric-label">Temperature</div><div class="metric-sub">entPhySensorValue</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--cyan)">${d.uptime}</div><div class="metric-label">Uptime</div><div class="metric-sub">sysUpTime.0</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--cyan)">${d.ifaces.length}</div><div class="metric-label">Interfaces</div><div class="metric-sub">ifNumber.0</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--${ver==='v3'?'green':'red'})">${ver.toUpperCase()}</div><div class="metric-label">SNMP Version</div><div class="metric-sub">${ver==='v3'?'Secure':'⚠ Insecure'}</div></div>`;
+
+  // System Info
+  document.getElementById('snmp-sysinfo').innerHTML=`
+    <div style="padding:8px 0;border-bottom:1px solid var(--border)"><strong style="color:var(--text)">sysDescr.0:</strong> ${d.desc}</div>
+    <div style="padding:8px 0;border-bottom:1px solid var(--border)"><strong style="color:var(--text)">sysName.0:</strong> ${d.sys}</div>
+    <div style="padding:8px 0;border-bottom:1px solid var(--border)"><strong style="color:var(--text)">sysContact.0:</strong> ${d.contact}</div>
+    <div style="padding:8px 0;border-bottom:1px solid var(--border)"><strong style="color:var(--text)">sysLocation.0:</strong> ${d.location}</div>
+    <div style="padding:8px 0;border-bottom:1px solid var(--border)"><strong style="color:var(--text)">sysUpTime.0:</strong> ${d.uptime}</div>
+    <div style="padding:8px 0"><strong style="color:var(--text)">sysObjectID.0:</strong> 1.3.6.1.4.1.${Math.floor(Math.random()*50000)}</div>`;
+
+  // Interfaces
+  document.getElementById('snmp-interfaces').innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:.72rem">
+    <tr style="border-bottom:1px solid var(--border)"><th style="text-align:right;padding:6px;color:var(--cyan)">Interface</th><th style="padding:6px;color:var(--cyan)">Status</th><th style="padding:6px;color:var(--cyan)">Speed</th><th style="padding:6px;color:var(--cyan)">In</th><th style="padding:6px;color:var(--cyan)">Out</th><th style="padding:6px;color:var(--cyan)">Errors</th></tr>
+    ${d.ifaces.map(i=>`<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px">${i.name}</td><td style="padding:6px;color:${i.status==='up'?'var(--green)':'var(--red)'}">${i.status}</td><td style="padding:6px">${i.speed}</td><td style="padding:6px">${i.in}</td><td style="padding:6px">${i.out}</td><td style="padding:6px;color:${i.errors>0?'var(--red)':'var(--green)'}">${i.errors}</td></tr>`).join('')}
+  </table>`;
+
+  // Security Assessment
+  const checks=[
+    {check:'SNMP Version',status:ver==='v3'?'pass':'fail',detail:ver==='v3'?'SNMPv3 with authentication and encryption':'⚠ '+ver.toUpperCase()+' has no encryption — upgrade to SNMPv3'},
+    {check:'Community String',status:community==='public'||community==='private'?'fail':'pass',detail:community==='public'||community==='private'?'⚠ Default community string "'+community+'" — change immediately':'Custom community string in use'},
+    {check:'Write Access',status:'pass',detail:'SNMP write access disabled (read-only)'},
+    {check:'ACL Restriction',status:Math.random()>0.5?'pass':'warn',detail:'SNMP access restricted to management subnet'},
+    {check:'Trap Destination',status:'pass',detail:'SNMP traps configured to SIEM (10.10.5.100)'},
+    {check:'MIB Exposure',status:'warn',detail:'Full MIB tree accessible — consider restricting views'},
+  ];
+  document.getElementById('snmp-security').innerHTML=checks.map(c=>{
+    const color=c.status==='pass'?'var(--green)':c.status==='fail'?'var(--red)':'var(--amber)';
+    const icon=c.status==='pass'?'✓':c.status==='fail'?'✗':'⚠';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <span style="color:${color};font-weight:700;font-size:1rem;min-width:20px">${icon}</span>
+      <div><div style="font-family:var(--font-heading);font-size:.85rem;font-weight:600">${c.check}</div><div style="font-size:.75rem;color:var(--text-dim)">${c.detail}</div></div>
+    </div>`;
+  }).join('');
 }
 
 // ── TAB NAVIGATION ──────────────────────────────────────────
