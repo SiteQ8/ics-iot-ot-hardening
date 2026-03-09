@@ -782,7 +782,7 @@ function calcAssess(){
     </div>`;
   });
   res.innerHTML=`
-    <div style="font-size:2rem;font-weight:700;font-family:var(--font-heading);color:${pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--red)';margin-bottom:1rem}">${pct}% Overall Compliance</div>
+    <div style="font-size:2rem;font-weight:700;font-family:var(--font-heading);color:${pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--red)'};margin-bottom:1rem">${pct}% Overall Compliance</div>
     ${cats.join('')}
     <div style="margin-top:1rem;padding:.75rem;border-radius:8px;background:${pct>=80?'var(--green-dim)':pct>=50?'var(--amber-dim)':'var(--red-dim)'};font-size:.85rem;color:${pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--red)'}">
       ${pct>=80?'✓ Strong security posture. Continue monitoring and improving.':pct>=50?'⚠ Moderate gaps detected. Prioritize critical control implementations.':'✗ Significant security gaps. Immediate remediation required for critical controls.'}
