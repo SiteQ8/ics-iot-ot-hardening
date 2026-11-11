@@ -1,5 +1,5 @@
 """
-ICS Hardening Framework — Test Suite
+ICS Hardening Framework: Test Suite
 """
 
 import pytest

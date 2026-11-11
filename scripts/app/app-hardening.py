@@ -546,7 +546,7 @@ class ICSApplicationHardener:
         return results
     
     def generate_hardening_report(self, output_file: str = None) -> Dict[str, Any]:
-        """Generate comprehensive hardening report."""
+        """Generate hardening report."""
         report = {
             "timestamp": datetime.now().isoformat(),
             "total_applications": len(set(result.application for result in self.results)),

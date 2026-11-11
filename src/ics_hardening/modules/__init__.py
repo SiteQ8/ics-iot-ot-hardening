@@ -1,1 +1,1 @@
-"""ICS Hardening Framework — Security Modules."""
+"""ICS Hardening Framework: Security Modules."""

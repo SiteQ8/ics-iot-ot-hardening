@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-ICS/IoT/OT Hardening Framework — Command Line Interface
+ICS/IoT/OT Hardening Framework: Command Line Interface
 
 Provides unified CLI access to all framework modules:
-  ics-harden  — Main hardening orchestrator
-  ics-scan    — ICS vulnerability scanner
-  ics-comply  — Multi-standard compliance checker
-  ics-monitor — Real-time OT monitoring
+  ics-harden: Main hardening orchestrator
+  ics-scan: ICS vulnerability scanner
+  ics-comply: Multi-standard compliance checker
+  ics-monitor: Real-time OT monitoring
 
 Author: Ali AlEnezi (SiteQ8)
 License: MIT
@@ -63,18 +63,18 @@ def print_banner():
 @click.group()
 @click.version_option(version="2.0.0", prog_name="ICS Hardening Framework")
 def main():
-    """ICS/IoT/OT Hardening Framework — Industrial Security Operations Center.
+    """ICS/IoT/OT Hardening Framework: Industrial Security Operations Center.
 
-    A comprehensive toolkit for securing Industrial Control Systems, IoT devices,
+    A toolkit for securing Industrial Control Systems, IoT devices,
     and Operational Technology environments.
 
     \b
     Modules:
-      assess   — Run security assessment
-      harden   — Apply hardening configurations
-      network  — Network segmentation & firewall tools
-      report   — Generate compliance reports
-      assets   — Asset discovery and inventory
+      assess: Run security assessment
+      harden: Apply hardening configurations
+      network: Network segmentation & firewall tools
+      report: Generate compliance reports
+      assets: Asset discovery and inventory
     """
     print_banner()
 
@@ -86,7 +86,7 @@ def main():
 @click.option("--output", "-o", default="./reports/assessment.json", help="Output report path")
 @click.option("--format", "-f", "fmt", type=click.Choice(["json", "html", "pdf"]), default="json")
 def assess(target, level, output, fmt):
-    """Run comprehensive ICS security assessment.
+    """Run ICS security assessment.
 
     Evaluates network segmentation, device hardening, protocol security,
     access controls, and monitoring coverage across all Purdue model levels.
@@ -283,7 +283,7 @@ def assets(cidr, protocols):
 @click.option("--output", "-o", default="./reports/scan.json")
 @click.version_option(version="2.0.0", prog_name="ics-scan")
 def scan(target, scan_type, output):
-    """ICS Vulnerability Scanner — Scan ICS/OT networks for vulnerabilities.
+    """ICS Vulnerability Scanner: Scan ICS/OT networks for vulnerabilities.
 
     Performs host discovery, port scanning, ICS protocol detection,
     and vulnerability assessment across all Purdue model levels.
@@ -304,7 +304,7 @@ def scan(target, scan_type, output):
 @click.option("--output", "-o", default="./reports/compliance.json")
 @click.version_option(version="2.0.0", prog_name="ics-comply")
 def comply(standard, input_file, output):
-    """ICS Compliance Checker — Validate against ICS security standards.
+    """ICS Compliance Checker: Validate against ICS security standards.
 
     Supports IEC 62443, NIST SP 800-82, NERC CIP, MITRE ATT&CK for ICS,
     CIS Controls v8, and CBK CORF.
@@ -322,7 +322,7 @@ def comply(standard, input_file, output):
 @click.option("--protocols", "-p", multiple=True, default=["modbus", "dnp3", "s7comm"])
 @click.version_option(version="2.0.0", prog_name="ics-monitor")
 def monitor(interface, protocols):
-    """ICS Network Monitor — Real-time OT traffic analysis.
+    """ICS Network Monitor: Real-time OT traffic analysis.
 
     Monitors ICS network traffic for anomalies, unauthorized commands,
     and protocol violations.

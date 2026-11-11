@@ -2,7 +2,7 @@
 """
 ICS Network Security Scanner
 
-A comprehensive network scanner designed specifically for Industrial Control Systems.
+A network scanner designed specifically for Industrial Control Systems.
 Discovers ICS devices, identifies protocols, and performs security assessments.
 
 Author: Ali AlEnezi
@@ -10,7 +10,7 @@ Github: https://github.com/SiteQ8/ics-iot-ot-hardening/
 License: MIT
 
 Version: 1.0.0
-🔎 Purpose
+Purpose
 Scans a given network range (CIDR format, e.g., 192.168.1.0/24) for ICS/OT protocols like:
 Modbus TCP (port 502)
 DNP3 (port 20000)
@@ -229,7 +229,7 @@ class ICSNetworkScanner:
         """Perform basic security checks on discovered device."""
         issues = []
         
-        # Check for default credentials (simplified check)
+        # Check for default credentials (basic)
         if 'Modbus TCP' in protocols:
             issues.append("Modbus TCP detected - ensure access controls are implemented")
         

@@ -2,7 +2,7 @@
 # Author: Ali AlEnezi
 # Github: https://github.com/SiteQ8/ics-iot-ot-hardening
 # Version: 1.0.0
-# 🔎 Purpose
+# Purpose
 # Strengthen Windows security for ICS/SCADA use.
 # Reduce attack surface by disabling unnecessary features/services.
 # Enforce stricter security policies.
