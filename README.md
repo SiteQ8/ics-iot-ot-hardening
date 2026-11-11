@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🏭 ICS/IoT/OT Hardening Framework
+# ICS/IoT/OT Hardening Framework
 
 ### The Open-Source Industrial Cybersecurity Platform
 
@@ -23,9 +23,9 @@
 
 </div>
 
-## 📸 Screenshots
+## Screenshots
 
-### Security Dashboard — Overview
+### Security Dashboard: Overview
 <p align="center">
 <img src="docs/screenshots/dashboard-overview.svg" alt="ICS Security Dashboard Overview" width="100%">
 </p>
@@ -48,7 +48,7 @@
 ---
 
 
-## 🔐 Dashboard Access
+## Dashboard Access
 
 The interactive dashboard includes a login screen for access control:
 
@@ -69,56 +69,56 @@ The interactive dashboard includes a login screen for access control:
 | **Compliance** | Multi-standard compliance gauges (NIST, IEC 62443, NERC CIP, CIS, ISA/IEC) |
 | **Scanner** | ICS vulnerability scanner (demo mode) with CVE detection |
 | **Protocols** | 12 ICS/SCADA protocol security reference with ports and mitigations |
-| **Assets** | ICS asset inventory — 15 demo assets (PLCs, RTUs, HMIs, SIS, VFDs) with vulnerability status |
-| **Incidents** | Security incident timeline — 12 demo incidents with severity classification |
-| **Discovery** | Active ICS asset discovery scanner — scan by IP range or protocol (Modbus, DNP3, S7, OPC UA, MQTT, SNMP, etc.). 20 demo devices with CVE references, animated scan log |
-| **SNMP** | SNMP network monitor — query devices with SNMPv1/v2c/v3, view CPU/memory/temperature/uptime, interface table, 6-point security assessment |
+| **Assets** | ICS asset inventory: 15 demo assets (PLCs, RTUs, HMIs, SIS, VFDs) with vulnerability status |
+| **Incidents** | Security incident timeline: 12 demo incidents with severity classification |
+| **Discovery** | Active ICS asset discovery scanner: scan by IP range or protocol (Modbus, DNP3, S7, OPC UA, MQTT, SNMP, etc.). 20 demo devices with CVE references, animated scan log |
+| **SNMP** | SNMP network monitor: query devices with SNMPv1/v2c/v3, view CPU/memory/temperature/uptime, interface table, 6-point security assessment |
 | **Settings** | Scan configuration, SNMP settings (auth/privacy protocols), alert thresholds, compliance standard selection, syslog/SIEM integration |
 
-## 🎯 Why This Framework?
+## Why This Framework?
 
 Industrial Control Systems face unique cybersecurity challenges that traditional IT security tools don't address. This framework bridges that gap with purpose-built tools for OT environments:
 
-- **ICS Protocol Awareness** — Understands Modbus, DNP3, S7comm, OPC UA, EtherNet/IP, BACnet, IEC 61850, and 5 more industrial protocols
-- **Purdue Model Architecture** — All tools designed around the ISA-95/Purdue reference model (L0–L5 + DMZ)
-- **Safety-First Approach** — Non-intrusive scanning options that respect OT availability requirements
-- **Multi-Standard Compliance** — Assess against IEC 62443, NIST SP 800-82, NERC CIP, MITRE ATT&CK for ICS, and CIS Controls simultaneously
-- **Real-World Tested** — Hardening scripts validated against Siemens, Allen-Bradley, Schneider, ABB, and GE environments
+- **ICS Protocol Awareness**: Understands Modbus, DNP3, S7comm, OPC UA, EtherNet/IP, BACnet, IEC 61850, and 5 more industrial protocols
+- **Purdue Model Architecture**: All tools designed around the ISA-95/Purdue reference model (L0, L5 + DMZ)
+- **Safety-First Approach**: Non-intrusive scanning options that respect OT availability requirements
+- **Multi-Standard Compliance**: Assess against IEC 62443, NIST SP 800-82, NERC CIP, MITRE ATT&CK for ICS, and CIS Controls simultaneously
+- **Real-World Tested**: Hardening scripts validated against Siemens, Allen-Bradley, Schneider, ABB, and GE environments
 
 ---
 
-## ✨ Features
+## Features
 
-### 🔍 ICS Vulnerability Scanner
+### ICS Vulnerability Scanner
 Automated scanning with ICS protocol detection for PLCs, RTUs, HMIs, SCADA servers, and field devices. Supports full, quick, protocol-specific, and firmware validation scans.
 
-### 📊 Interactive Web Dashboard
+### Interactive Web Dashboard
 Full-featured security operations dashboard with Purdue model visualization, real-time metrics, interactive assessment tools, and compliance gauges. Deploys as a GitHub Pages site.
 
-### 🛡️ Multi-Standard Compliance Engine
+### Multi-Standard Compliance Engine
 Simultaneous assessment against 5+ security standards with gap analysis, control mapping, and remediation tracking across 1,200+ controls.
 
-### 🔥 Firewall Rule Generator
+### Firewall Rule Generator
 Automated firewall rule generation for Purdue model segmentation. Outputs iptables, Cisco ASA, and Palo Alto formats.
 
-### 🖥️ CLI Toolkit
+### CLI Toolkit
 Rich command-line interface with progress bars, color-coded output, and exportable reports (JSON, HTML, PDF).
 
-### 📡 Protocol Security Analyzer
+### Protocol Security Analyzer
 Deep inspection of 12 ICS protocols with security posture assessment per protocol, including authentication, encryption, and access control checks.
 
-### 🔧 System Hardening Scripts
+### System Hardening Scripts
 Pre-built hardening scripts for Windows ICS nodes, Linux servers, SCADA applications, and HMI workstations aligned with CIS benchmarks.
 
-### 📈 OT Network Monitoring
+### OT Network Monitoring
 Real-time anomaly detection for industrial network traffic with SIEM integration connectors (Splunk, QRadar, Elastic).
 
-### 🐳 Docker Ready
+### Docker Ready
 Full Docker and docker-compose support for isolated deployment of all framework components.
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 
@@ -175,7 +175,7 @@ cd gui && python -m http.server 8080
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ics-iot-ot-hardening/
@@ -217,7 +217,7 @@ ics-iot-ot-hardening/
 
 ---
 
-## 🔒 Security Controls Coverage
+## Security Controls Coverage
 
 ### Purdue Model Zones
 
@@ -265,7 +265,7 @@ This framework maps controls to the following international standards:
 
 ---
 
-## 🐳 Docker Deployment
+## Docker Deployment
 
 ```bash
 # Build and run the full stack
@@ -283,7 +283,7 @@ docker-compose logs -f ics-dashboard
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please see the [Contributing Guidelines](CONTRIBUTING.md) for details.
 
@@ -297,11 +297,11 @@ Contributions are welcome! Please see the [Contributing Guidelines](CONTRIBUTING
 
 ---
 
-## 📄 License
+## License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License, see the [LICENSE](LICENSE) file for details.
 
-## 🔗 Related Resources
+## Related Resources
 
 - [CISA ICS Advisories](https://www.cisa.gov/topics/industrial-control-systems)
 - [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)
@@ -311,7 +311,7 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 ---
 
-## 👤 Author
+## Author
 
 **Ali AlEnezi (SiteQ8)**
 - GitHub: [@SiteQ8](https://github.com/SiteQ8)
@@ -322,9 +322,6 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 <div align="center">
 
-**⭐ Star this repo if you find it useful! ⭐**
-
-Made with ❤️ in Kuwait 🇰🇼 for the global ICS security community
 
 *Aligned with NIST SP 800-82 · IEC 62443 · NERC CIP · MITRE ATT&CK for ICS · CIS Controls v8*
 
